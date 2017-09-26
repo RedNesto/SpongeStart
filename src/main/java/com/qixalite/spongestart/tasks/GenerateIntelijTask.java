@@ -99,7 +99,18 @@ public class GenerateIntelijTask extends SpongeStartTask {
 
         Element mainName = document.createElement("option");
         mainName.setAttribute("name", "MAIN_CLASS_NAME");
-        mainName.setAttribute("value", "StartServer");
+        mainName.setAttribute("value", taskname.equalsIgnoreCase("StartVanillaServer") ? "org.spongepowered.server.launch.VersionCheckingMain" : "StartServer");
+
+        Element VMargs = document.createElement("option");
+        Element programParameters = document.createElement("option");
+
+        if (taskname.equalsIgnoreCase("StartVanillaServer")) {
+            VMargs.setAttribute("name", "VM_PARAMETERS");
+            VMargs.setAttribute("value", "-classpath $PROJECT_DIR$/run/vanilla/server.jar:$PROJECT_DIR$/build/classes/java/main");
+
+            programParameters.setAttribute("name", "PROGRAM_PARAMETERS");
+            programParameters.setAttribute("value", "--scan-classpath");
+        }
 
         Element workingDir = document.createElement("option");
         workingDir.setAttribute("name", "WORKING_DIRECTORY");
@@ -111,6 +122,10 @@ public class GenerateIntelijTask extends SpongeStartTask {
 
         configuration.appendChild(extension);
         configuration.appendChild(mainName);
+        if (taskname.equalsIgnoreCase("StartVanillaServer")) {
+            configuration.appendChild(VMargs);
+            configuration.appendChild(programParameters);
+        }
         configuration.appendChild(workingDir);
         configuration.appendChild(moduleName);
 

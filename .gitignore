@@ -4,3 +4,4 @@ out
 .repo
 .idea
 .gradle
+gradle.properties
