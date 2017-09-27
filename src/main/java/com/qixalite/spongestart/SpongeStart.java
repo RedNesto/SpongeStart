@@ -40,9 +40,7 @@ public class SpongeStart implements Plugin<Project>  {
         applyPlugins();
         this.project.getExtensions().create("spongestart", SpongeStartExtension.class, this);
 
-        this.project.afterEvaluate(projectAfter -> {
-            setupTasks((SpongeStartExtension) projectAfter.getExtensions().getByName("spongestart"));
-        });
+        this.project.afterEvaluate(projectAfter -> setupTasks((SpongeStartExtension) projectAfter.getExtensions().getByName("spongestart")));
         this.project.getGradle().addBuildListener(new BuildListener() {
             @Override
             public void buildStarted(Gradle gradle) {
@@ -94,7 +92,7 @@ public class SpongeStart implements Plugin<Project>  {
         downloadSpongeForge.setVersion(extension.getSpongeForgeVersion());
 
         //Download Forge Task
-        DownloadForgeTask downloadForgeSetup = this.project.getTasks().create("downloadForgeSetup", DownloadForgeTask.class);
+        ForgeDownloadTask downloadForgeSetup = this.project.getTasks().create("downloadForge", ForgeDownloadTask.class);
         downloadForgeSetup.setDownloadSpongeForgeTask(downloadSpongeForge);
         downloadForgeSetup.dependsOn(downloadSpongeForge);
         downloadForgeSetup.setLocation(new File(extension.getForgeServerFolder(), Constants.FORGESETUP_LOCATION));

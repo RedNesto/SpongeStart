@@ -1,11 +1,10 @@
 package com.qixalite.spongestart.tasks;
 
+import org.apache.commons.io.FileUtils;
 import org.gradle.api.tasks.TaskAction;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 public class SetupForgeServer extends SpongeStartTask {
 
@@ -27,28 +26,22 @@ public class SetupForgeServer extends SpongeStartTask {
                     .redirectErrorStream(true)
                     .start();
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(pr.getInputStream()));
 
-            while (pr.isAlive()){
-                String line = reader.readLine();
-                if (line != null)
-                    this.getLogger().lifecycle(line);
-            }
-
-
-            new File(this.folder, "setup.jar").delete();
             try {
                 pr.waitFor();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
-            File serverjar = new File(this.folder, "setup.jar");
-            serverjar.delete();
+            FileUtils.deleteQuietly(new File(this.folder, "setup.jar"));
 
             for (File file : folder.listFiles((dir, name) -> name.endsWith("-universal.jar"))) {
                 file.renameTo(new File(this.folder, "server.jar"));
             }
+
+            FileUtils.deleteDirectory(new File(this.folder, "libraries/net/minecraftforge"));
+            FileUtils.deleteQuietly(new File(this.folder, "mods/mod_list.json"));
+
         } catch (IOException e) {
             e.printStackTrace();
         }

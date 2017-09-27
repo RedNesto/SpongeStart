@@ -5,7 +5,7 @@ import java.net.URL;
 
 import static com.qixalite.spongestart.Constants.FORGE_REPO;
 
-public class DownloadForgeTask extends DownloadTask {
+public class ForgeDownloadTask extends DownloadTask {
 
     private SpongeDownloadTask downloadSpongeForgeTask;
 
@@ -23,4 +23,8 @@ public class DownloadForgeTask extends DownloadTask {
         }
         super.doStuff();
     }
+
+
+
+
 }

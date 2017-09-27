@@ -16,7 +16,7 @@ public class AcceptEulaTask extends SpongeStartTask {
     }
 
     @TaskAction
-    public void doStuff(){
+    public void doStuff() {
         this.folders.forEach(folder ->{
                     try {
                         FileUtils.writeStringToFile(new File(folder, "eula.txt"), "eula=true");
