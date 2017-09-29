@@ -15,13 +15,11 @@ public class CleanFolderTask extends SpongeStartTask {
     }
 
     @TaskAction
-    public void doStuff(){
-        if (this.folder.exists()) {
-            try {
-                FileUtils.deleteDirectory(this.folder);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    public void doStuff() {
+        try {
+            FileUtils.cleanDirectory(folder);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -1,9 +1,9 @@
 plugins {
-  id "com.gradle.plugin-publish" version "0.9.7"
+    id 'com.gradle.plugin-publish' version '0.9.8'
 }
 
 group 'com.qixalite'
-version '1.6.4'
+version '2.0.0'
 
 apply plugin: 'java'
 apply plugin: 'maven'
@@ -16,29 +16,34 @@ repositories {
 
 dependencies {
     testCompile 'junit:junit:4.12'
-    compile 'com.google.code.gson:gson:2.8.0'
+    compile 'org.json:json:20170516'
     compile 'commons-io:commons-io:2.5'
-    compile 'com.google.guava:guava:21.0'
-    compile 'org.apache.httpcomponents:httpclient:4.2.2'
+    compile 'org.apache.httpcomponents:httpclient:4.5.3'
     compile gradleApi()
 }
 
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: uri('.repo'))
+        }
+    }
+}
 
+task setupPluginUpload {
+    doLast {
+        def key=System.env.gradlePublishKey
+        def secret = System.env.gradlePublishSecret
 
-task setupPluginUpload << {
-
-    def key=System.env.gradlePublishKey
-    def secret = System.env.gradlePublishSecret
-
-    ext['gradle.publish.key'] = System.env.gradlePublishKey
-    ext['gradle.publish.secret'] = System.env.gradlePublishSecret
-
+        ext['gradle.publish.key'] = System.env.gradlePublishKey
+        ext['gradle.publish.secret'] = System.env.gradlePublishSecret
+    }
 }
 
 tasks.publishPlugins.dependsOn tasks.setupPluginUpload
 
 pluginBundle {
-  website = 'http://www.gradle.org/'
+  website = 'https://www.gradle.org/'
   vcsUrl = 'https://github.com/qixalite/spongestart/'
   description = "Gradle plugin to run sponge inside your workspace."
   tags = ["sponge", "minecraft"]
@@ -52,7 +57,7 @@ pluginBundle {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.4.1'
-    distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
+    gradleVersion = '4.2'
+    distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-bin.zip"
 }
 

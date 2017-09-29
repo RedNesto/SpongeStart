@@ -1,12 +1,13 @@
 package com.qixalite.spongestart.tasks;
 
-import com.qixalite.spongestart.Constants;
 import org.gradle.api.DefaultTask;
 
 public class SpongeStartTask extends DefaultTask {
 
+    private static final String TASK_GROUP = "SpongeStart";
+
     public SpongeStartTask(){
-        setGroup(Constants.TASK_GROUP);
+        setGroup(TASK_GROUP);
     }
 
 }

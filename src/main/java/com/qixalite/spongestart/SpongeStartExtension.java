@@ -4,60 +4,26 @@ import java.io.File;
 
 public class SpongeStartExtension {
 
-    private final transient SpongeStart spongeStart;
+    public String minecraft = "";
+    public String type = "";
+    public String forgeServerFolder = "run" + File.separator + "forge";
+    public String vanillaServerFolder = "run" + File.separator + "vanilla";
+    public String spongeForgeVersion = "";
+    public String spongeVanillaVersion = "";
+    public String forge = "";
+    public String online = "true";
 
-    protected String minecraft = "";
-    protected String type = "bleeding";
-    protected String forgeServerFolder = "run" + File.separator + "forge";
-    protected String vanillaServerFolder = "run" + File.separator + "vanilla";
-    protected String forgeArtifactType = "";
-    protected String vanillaArtifactType = "";
-    protected String spongeForgeVersion = null;
-    protected String spongeVanillaVersion = null;
-
-
-
-    protected String extraProgramParameters;
-    /**
-     * Automatically accept the eula upon generation. Can be done with the task acceptEula,
-     * but still you typed it so you kinda accepted it right?
-     */
-    protected boolean eula = false;
-
-    public SpongeStartExtension(SpongeStart spongeStart) {
-        this.spongeStart = spongeStart;
-    }
-
-    public void setForgeArtifactType(String forgeArtifactType) {
-        this.forgeArtifactType = forgeArtifactType;
-    }
-
-    public SpongeStart getSpongeStart() {
-        return spongeStart;
-    }
-
-    public String getForgeArtifactType() {
-        return forgeArtifactType;
-    }
-
-    public String getVanillaArtifactType() {
-        return vanillaArtifactType;
-    }
-
-    public void setVanillaArtifactType(String vanillaArtifactType) {
-        this.vanillaArtifactType = vanillaArtifactType;
-    }
 
     public String getSpongeVanillaVersion() {
         return spongeVanillaVersion;
     }
 
-    public String getSpongeForgeVersion() {
-        return spongeForgeVersion;
-    }
-
     public void setSpongeVanillaVersion(String spongeVanillaVersion) {
         this.spongeVanillaVersion = spongeVanillaVersion;
+    }
+
+    public String getSpongeForgeVersion() {
+        return spongeForgeVersion;
     }
 
     public void setSpongeForgeVersion(String spongeForgeVersion) {
@@ -84,31 +50,32 @@ public class SpongeStartExtension {
         return this.forgeServerFolder;
     }
 
-    public String getVanillaServerFolder() {
-        return this.vanillaServerFolder;
-    }
-
     public void setForgeServerFolder(String forgeServerFolder) {
         this.forgeServerFolder = forgeServerFolder;
+    }
+
+    public String getVanillaServerFolder() {
+        return this.vanillaServerFolder;
     }
 
     public void setVanillaServerFolder(String vanillaServerFolder) {
         this.vanillaServerFolder = vanillaServerFolder;
     }
 
-    public void setEula(boolean eula) {
-        this.eula = eula;
+    public String getForge() {
+        return forge;
     }
 
-    public boolean isEula() {
-        return this.eula;
+    public void setForge(String forge) {
+        this.forge = forge;
     }
 
-    public String getExtraProgramParameters() {
-        return extraProgramParameters == null ? "" : extraProgramParameters;
+    public String getOnline() {
+        return online;
     }
 
-    public void setExtraProgramParameters(String extraProgramParameters) {
-        this.extraProgramParameters = extraProgramParameters;
+    public void setOnline(String online) {
+        this.online = online;
     }
+
 }

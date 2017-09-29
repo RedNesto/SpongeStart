@@ -1,7 +1,5 @@
 package com.qixalite.spongestart.tasks;
 
-import com.google.common.io.Resources;
-import com.qixalite.spongestart.SpongeStart;
 import org.gradle.api.tasks.TaskAction;
 import org.w3c.dom.*;
 

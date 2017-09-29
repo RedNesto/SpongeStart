@@ -1,9 +1,6 @@
 package com.qixalite.spongestart.tasks;
 
-import com.google.common.io.Resources;
-import com.qixalite.spongestart.SpongeStart;
 import org.apache.commons.io.IOUtils;
-import org.codehaus.groovy.reflection.ReflectionUtils;
 import org.gradle.api.GradleException;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
@@ -16,9 +13,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
