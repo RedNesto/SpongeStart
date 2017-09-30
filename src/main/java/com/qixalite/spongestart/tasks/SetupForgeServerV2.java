@@ -9,6 +9,7 @@ public class SetupForgeServerV2 extends SetupServerV2 {
 
     @Override
     public void setupServer() {
+
         try {
             Process pr = new ProcessBuilder()
                     .command("java -jar setup.jar --installServer".split(" "))

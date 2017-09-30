@@ -26,16 +26,16 @@ public class SpongeDownloadTaskV2 extends DownloadTaskV2 {
         String artifactVersion = getArtifactVersion();
 
         if (!artifactVersion.isEmpty()) {
-            if (artifact.equalsIgnoreCase("spongeforge")) {
-                HttpGet req = new HttpGet(DOWNLOAD_API + artifact + "/downloads/" + artifact);
-                try {
-                    setForgeDependencies(new JSONObject(EntityUtils.toString(client.execute(req).getEntity())));
-                    client.close();
-                } catch (IOException e) {
-                    throw new GradleException("Failed to obtain specific version: " + artifact + " : " + e.getMessage());
-                }
+            HttpGet req = new HttpGet(DOWNLOAD_API + artifact + "/downloads/" + artifactVersion);
 
+            try {
+                JSONObject con = new JSONObject(EntityUtils.toString(client.execute(req).getEntity()));
+                setDependencies(con);
+                client.close();
+            } catch (IOException e) {
+                throw new GradleException("Failed to obtain specific version: " + artifact + " : " + e.getMessage());
             }
+
             return REPO + artifact + "/" + artifactVersion + "/" + artifact + "-" + artifactVersion + ".jar";
         }
 
@@ -43,9 +43,7 @@ public class SpongeDownloadTaskV2 extends DownloadTaskV2 {
 
         try {
             JSONObject content= (new JSONArray(EntityUtils.toString(client.execute(request).getEntity()))).getJSONObject(0);
-            if (artifact.equalsIgnoreCase("spongeforge")) {
-                setForgeDependencies(content);
-            }
+            setDependencies(content);
             client.close();
             return content.getJSONObject("artifacts").getJSONObject("").getString("url");
         } catch (IOException e) {
@@ -58,9 +56,11 @@ public class SpongeDownloadTaskV2 extends DownloadTaskV2 {
         return artifact.equalsIgnoreCase("spongeforge") ? getExtension().getSpongeForgeVersion() : getExtension().getSpongeVanillaVersion();
     }
 
-    private void setForgeDependencies(JSONObject obj) {
-        getExtension().setForge(obj.getJSONObject("dependencies").getString("forge"));
+    private void setDependencies(JSONObject obj) {
         getExtension().setMinecraft(obj.getJSONObject("dependencies").getString("minecraft"));
+        if (artifact.equalsIgnoreCase("spongeforge")) {
+            getExtension().setForge(obj.getJSONObject("dependencies").getString("forge"));
+        }
     }
 
 

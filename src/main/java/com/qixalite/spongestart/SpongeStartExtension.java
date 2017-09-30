@@ -8,6 +8,7 @@ public class SpongeStartExtension {
     public String type = "";
     public String forgeServerFolder = "run" + File.separator + "forge";
     public String vanillaServerFolder = "run" + File.separator + "vanilla";
+    public String cacheFolder = "";
     public String spongeForgeVersion = "";
     public String spongeVanillaVersion = "";
     public String forge = "";
@@ -60,6 +61,14 @@ public class SpongeStartExtension {
 
     public void setVanillaServerFolder(String vanillaServerFolder) {
         this.vanillaServerFolder = vanillaServerFolder;
+    }
+
+    public String getCacheFolder() {
+        return cacheFolder;
+    }
+
+    public void setCacheFolder(String cacheFolder) {
+        this.cacheFolder = cacheFolder;
     }
 
     public String getForge() {

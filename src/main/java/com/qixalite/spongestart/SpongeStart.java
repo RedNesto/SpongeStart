@@ -22,15 +22,15 @@ public class SpongeStart implements Plugin<Project>  {
 
     public static final String PROVIDED_SCOPE = "spongeStart_Provided";
 
-    private File cachedDir;
-    private File startDir;
+//    private File cachedDir;
+//    private File startDir;
 
     @Override
     public void apply(Project project) {
-        this.cachedDir = new File(project.getGradle().getGradleUserHomeDir(), "caches/SpongeStart/");
-        this.startDir = new File(this.cachedDir, "start");
-
-        DownloadTaskV2.setCacheDir(new File(this.cachedDir, "downloads"));
+//        this.cachedDir = new File(project.getGradle().getGradleUserHomeDir(), "caches/SpongeStart/");
+//        this.startDir = new File(this.cachedDir, "start");
+//
+//        DownloadTaskV2.setCacheDir(new File(this.cachedDir, "downloads"));
 
         project.getPlugins().apply("java");
         project.getPlugins().apply("idea");
@@ -69,13 +69,16 @@ public class SpongeStart implements Plugin<Project>  {
 
     private void setupTasks(SpongeStartExtension extension, Project project){
 
+        extension.setCacheFolder(project.getGradle().getGradleUserHomeDir() + "/caches/SpongeStart/");
+        File startDir = new File(extension.getCacheFolder(), "start");
+
         //generate start task
         GenerateStart generateStartTask = project.getTasks().create("generateStart", GenerateStart.class);
-        generateStartTask.setOutputDir(this.startDir);
+        generateStartTask.setOutputDir(startDir);
         generateStartTask.setGroup(null);
 
         project.getConfigurations().maybeCreate(PROVIDED_SCOPE);
-        project.getDependencies().add("runtime", project.files(this.startDir));
+        project.getDependencies().add("runtime", project.files(startDir));
 
         //SpongeForge Download Task
         SpongeDownloadTaskV2 downloadSpongeForgeV2 = project.getTasks().create("downloadSpongeForge", SpongeDownloadTaskV2.class);
@@ -128,7 +131,7 @@ public class SpongeStart implements Plugin<Project>  {
                 .setFolder(new File(extension.getForgeServerFolder()));
 
         project.getTasks().create("cleanSpongeStartCache", CleanFolderTask.class)
-                .setFolder(this.cachedDir);
+                .setFolder(new File(extension.getCacheFolder()));
 
 
     }

@@ -16,7 +16,6 @@ public abstract class DownloadTaskV2 extends SpongeStartTask {
 
     private File location;
     private SpongeStartExtension ext;
-    private static File cacheDir;
 
     public final void setLocation(File location) {
         this.location = location;
@@ -30,16 +29,13 @@ public abstract class DownloadTaskV2 extends SpongeStartTask {
         this.ext = ext;
     }
 
-    public static void setCacheDir(File cache) {
-        DownloadTaskV2.cacheDir = cache;
-    }
 
     @TaskAction
     public void doStuff() {
         String url = getDownloadUrl();
 
         try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
-            File cached = new File(DownloadTaskV2.cacheDir, url.substring(url.lastIndexOf("/") + 1));
+            File cached = new File(getExtension().getCacheFolder(), "downloads/" + url.substring(url.lastIndexOf("/") + 1));
             int size = Integer.valueOf(client.execute(new HttpGet(url)).getLastHeader("Content-Length").getValue());
             if (!(cached.exists() && cached.length() == size)) {
                 FileUtils.copyURLToFile(new URL(url), cached);
