@@ -25,20 +25,13 @@ public class SetupForgeServerV2 extends SetupServerV2 {
                     new File(getLocation(), "server.jar")
             );
 
+            FileUtils.deleteDirectory(new File(getLocation(), "libraries/net/minecraftforge"));
+            FileUtils.deleteQuietly(new File(getLocation(), "mods/mod_list.json"));
+
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
 
     }
 
-    @Override
-    public void tweakServer() {
-        try {
-            FileUtils.deleteDirectory(new File(getLocation(), "libraries/net/minecraftforge"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        FileUtils.deleteQuietly(new File(getLocation(), "mods/mod_list.json"));
-
-    }
 }
