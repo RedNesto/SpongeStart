@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 public class SetupForgeServerV2 extends SetupServerV2 {
 
@@ -32,6 +33,26 @@ public class SetupForgeServerV2 extends SetupServerV2 {
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    public void tweakServer() {
+        File prop = new File(getLocation(), "config/forge.cfg");
+        try {
+            FileUtils.writeStringToFile(prop,
+                    "general {\n" +
+                    "    B:disableVersionCheck=true\n" +
+                    "}\n", Charset.defaultCharset());
+
+            FileUtils.writeStringToFile(prop,
+                    "version_checking {\n" +
+                    "    B:Global=false\n" +
+                    "}\n",
+                    Charset.defaultCharset(), true);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
