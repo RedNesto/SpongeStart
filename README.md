@@ -1,44 +1,62 @@
 # SpongeStart [![forthebadge](https://forthebadge.com/images/badges/contains-cat-gifs.svg)](https://forthebadge.com) 
 [![GitHub 
-stars](https://img.shields.io/github/stars/Qixalite/SpongeStart.svg)](https://github.com/Qixalite/SpongeStart/stargazers) [![GitHub 
-issues](https://img.shields.io/github/issues/Qixalite/SpongeStart.svg)](https://github.com/Qixalite/SpongeStart/issues) [![Build 
-Status](https://travis-ci.org/Qixalite/SpongeStart.svg?branch=master)](https://travis-ci.org/Qixalite/SpongeStart)
+stars](https://img.shields.io/github/stars/ImMorpheus/SpongeStart.svg)](https://github.com/ImMorpheus/SpongeStart/stargazers) [![GitHub 
+issues](https://img.shields.io/github/issues/ImMorpheus/SpongeStart.svg)](https://github.com/ImMorpheusSpongeStart/issues) [![Latest Version](https://img.shields.io/badge/gradleplugin-v2.0.2-green.svg)](https://plugins.gradle.org/plugin/com.qixalite.spongestart2)
 
-Gradle plugin to run sponge inside your workspace.
+Gradle plugin to run sponge inside your workspace. Based on the SpongeStart by thomas15v.
+I’ve fixed the SpongeVanilla issue and added a few things.
+
+### Major differences
+
+* SpongeVanilla issues should be solved (thanks to RandomByte).
+* Removed acceptEula task (Eula is now accepted by default upon server setup, avoiding the creation of an eula.txt in the forge folder while you’re setting up a vanilla server).
+* Mercurius is deleted during forge server setup.
+* downloadSpongeVanilla is a separate task now.
+* New properties in build.gradle (see below).
+* Tweaked configs after server setup (see below).
+* Minor fixes
+
+### List of tweaks
+
+server.properties:
+```
+max-tick-time=-1
+snooper-enabled=false
+allow-flight=true
+```
+
+forge.cfg:
+```
+general {
+    B:disableVersionCheck=true
+}
+version_checking {
+    B:Global=false
+}
+```
+
 
 ## Example Build.gradle for your project
 ```groovy
 plugins {
-  id "com.qixalite.spongestart" version "1.6.0"
+  id 'com.qixalite.spongestart2' version '2.0.2'
   id "java"
 }
 
-sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-    maven {
-        url 'https://repo.spongepowered.org/maven/'
-    }
-}
-
-spongestart{
-   eula true
-   
-   //optional settings, takes latest version by default
+spongestart {
+   //optional* settings
    minecraft '1.10.2'
-   type 'bleeding'
+   type 'bleeding' //default to stable
    spongeForgeVersion '1.10.2-2202-5.1.0-BETA-2042'
    spongeVanillaVersion '1.10.2-5.0.0-BETA-89'
+   online 'false' //default to true (online-mode in server.properties)
 }
 
-dependencies{
-    //you still need to set your dependency on sponge, this plugin only handles the running part.
-    compile 'org.spongepowered:spongeapi:3.1.0-SNAPSHOT'
-}
 ```
+Note: you have to define either minecraft or the sponge specific version for the platform you plan to setup.
 
-##Commands
+## Commands
+
 >`gradle setupServer`
 > Generates a forge and vanilla server + intelij run configurations.
 
@@ -51,12 +69,12 @@ dependencies{
 
 ## Run Configurations for your IDE (in case they don't automatic generate)
 
-####**Start SpongeForge Server:**
+### Start SpongeForge Server
 >
 - **Mainclass**: `StartServer`
 - **Working Directory**: `run/forge`
 
-####**Start SpongeVanilla Server:**
+### Start SpongeVanilla Server
 >
 - **Mainclass**: `StartServer`
 - **Working Directory**: `run/vanilla`
