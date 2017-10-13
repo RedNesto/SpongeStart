@@ -1,5 +1,6 @@
 package com.qixalite.spongestart.tasks;
 
+import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.TaskAction;
 import org.w3c.dom.*;
 
@@ -15,6 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class GenerateIntelijTask extends SpongeStartTask {
 
@@ -24,8 +26,12 @@ public class GenerateIntelijTask extends SpongeStartTask {
     private String taskname = "";
     private String modulename = "";
 
+    private Set<String> deps;
+    private String out;
+
     @TaskAction
-    public void doStuff(){
+    public void doStuff() {
+
         try {
             Map<String, String> configs = new HashMap<>();
             configs.put("MAIN_CLASS_NAME", "StartServer");
@@ -104,7 +110,16 @@ public class GenerateIntelijTask extends SpongeStartTask {
 
         if (taskname.equalsIgnoreCase("StartVanillaServer")) {
             VMargs.setAttribute("name", "VM_PARAMETERS");
-            VMargs.setAttribute("value", "-classpath $PROJECT_DIR$/run/vanilla/server.jar:$PROJECT_DIR$/build/classes/java/main");
+
+            StringBuilder s = new StringBuilder("-classpath $PROJECT_DIR$/run/vanilla/server.jar:");
+
+            for (String d : deps) {
+                s.append(d).append(":");
+            }
+
+            s.append(out);
+
+            VMargs.setAttribute("value", s.toString());
 
             programParameters.setAttribute("name", "PROGRAM_PARAMETERS");
             programParameters.setAttribute("value", "--scan-classpath");
@@ -151,4 +166,13 @@ public class GenerateIntelijTask extends SpongeStartTask {
     public void setTaskname(String taskname) {
         this.taskname = taskname;
     }
+
+    public void setDeps(Set<String> deps) {
+        this.deps = deps;
+    }
+
+    public void setOut(String out) {
+        this.out = out;
+    }
+
 }

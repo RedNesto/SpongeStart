@@ -7,16 +7,20 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ResolvedConfiguration;
+import org.gradle.api.artifacts.ResolvedDependency;
+import org.gradle.api.file.FileCollection;
 import org.gradle.api.initialization.Settings;
 import org.gradle.api.invocation.Gradle;
+import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.plugins.ide.idea.model.IdeaModel;
 
 import java.io.File;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 public class SpongeStart implements Plugin<Project>  {
 
@@ -100,6 +104,35 @@ public class SpongeStart implements Plugin<Project>  {
 
         //generate intelij tasks
         String intellijModule = getintellijModuleName(project);
+        Set<String> deps = new HashSet<>();
+
+
+        SourceSetContainer cont = (SourceSetContainer) project.getProperties().get("sourceSets");
+        Set<File> f = cont.getByName(SourceSet.MAIN_SOURCE_SET_NAME).getOutput().getClassesDirs().getFiles();
+        File output = null;
+
+        for (File fi : f) {
+            if (fi.exists()) output = fi;
+        }
+
+        if (output == null) {
+            for (File sf : f.iterator().next().getParentFile().getParentFile().listFiles()) {
+                if (sf.isDirectory() && new File(sf, "mcmod.info").exists()) {
+                    output = sf;
+                }
+            }
+        }
+
+
+
+        Configuration compileConfiguration = project.getConfigurations().getByName("compile");
+        ResolvedConfiguration resolvedconfig = compileConfiguration.getResolvedConfiguration();
+
+        resolvedconfig.getFirstLevelModuleDependencies().stream().
+                filter(resolvedDependency -> !resolvedDependency.getName().startsWith("org.spongepowered:spongeapi")).forEach(
+                        dep -> dep.getAllModuleArtifacts().forEach(artifact -> deps.add(artifact.getFile().getAbsolutePath()))
+        );
+
 
         GenerateIntelijTask generateIntelijForge = project.getTasks().create("generateIntellijForgeTask", GenerateIntelijTask.class);
         generateIntelijForge.setModulename(intellijModule);
@@ -110,6 +143,8 @@ public class SpongeStart implements Plugin<Project>  {
         generateIntelijVanilla.setModulename(intellijModule);
         generateIntelijVanilla.setTaskname("StartVanillaServer");
         generateIntelijVanilla.setWorkingdir(extension.getVanillaServerFolder());
+        generateIntelijVanilla.setDeps(deps);
+        generateIntelijVanilla.setOut(output.getAbsolutePath());
 
         //Setup Forge task
         SetupForgeServerV2 setupForgeServerV2 = project.getTasks().create("setupForgeServer", SetupForgeServerV2.class);
