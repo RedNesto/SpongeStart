@@ -104,57 +104,68 @@ public class SpongeStart implements Plugin<Project>  {
 
         //generate intelij tasks
         String intellijModule = getintellijModuleName(project);
-        Set<String> deps = new HashSet<>();
 
 
         SourceSetContainer cont = (SourceSetContainer) project.getProperties().get("sourceSets");
         Set<File> f = cont.getByName(SourceSet.MAIN_SOURCE_SET_NAME).getOutput().getClassesDirs().getFiles();
         File output = null;
 
-        for (File fi : f) {
-            if (fi.exists()) output = fi;
-        }
 
-        if (output == null) {
-            for (File sf : f.iterator().next().getParentFile().getParentFile().listFiles()) {
-                if (sf.isDirectory() && new File(sf, "mcmod.info").exists()) {
-                    output = sf;
-                }
+        for (File sf : f.iterator().next().getParentFile().getParentFile().listFiles()) {
+            if (sf.isDirectory() && new File(sf, "mcmod.info").exists()) {
+                output = sf;
+                break;
             }
         }
 
 
+        StringBuilder s = new StringBuilder("-classpath $PROJECT_DIR$/run/vanilla/server.jar:");
 
         Configuration compileConfiguration = project.getConfigurations().getByName("compile");
         ResolvedConfiguration resolvedconfig = compileConfiguration.getResolvedConfiguration();
 
         resolvedconfig.getFirstLevelModuleDependencies().stream().
                 filter(resolvedDependency -> !resolvedDependency.getName().startsWith("org.spongepowered:spongeapi")).forEach(
-                        dep -> dep.getAllModuleArtifacts().forEach(artifact -> deps.add(artifact.getFile().getAbsolutePath()))
+                        dep -> dep.getAllModuleArtifacts().forEach(artifact -> s.append(artifact.getFile().getAbsolutePath()).append(":"))
         );
+        s.append(output.getAbsolutePath());
 
+        GenerateRunTaskV2 generateVanillaRun = project.getTasks().create("GenerateVanillaRun", GenerateRunTaskV2.class);
+        generateVanillaRun.setModule(intellijModule);
+        generateVanillaRun.setName("StartVanillaServer");
+        generateVanillaRun.setDir("file://$PROJECT_DIR$/"+extension.getVanillaServerFolder());
+        generateVanillaRun.setMain("org.spongepowered.server.launch.VersionCheckingMain");
+        generateVanillaRun.setPargs("--scan-classpath");
+        generateVanillaRun.setVargs(s.toString());
 
-        GenerateIntelijTask generateIntelijForge = project.getTasks().create("generateIntellijForgeTask", GenerateIntelijTask.class);
-        generateIntelijForge.setModulename(intellijModule);
-        generateIntelijForge.setTaskname("StartForgeServer");
-        generateIntelijForge.setWorkingdir(extension.getForgeServerFolder());
+        GenerateRunTaskV2 generateForgeRun = project.getTasks().create("GenerateForgeRun", GenerateRunTaskV2.class);
+        generateForgeRun.setModule(intellijModule);
+        generateForgeRun.setName("StartForgeServer");
+        generateForgeRun.setDir("file://$PROJECT_DIR$/"+extension.getForgeServerFolder());
+        generateForgeRun.setMain("StartServer");
 
-        GenerateIntelijTask generateIntelijVanilla = project.getTasks().create("generateIntellijVanillaTask", GenerateIntelijTask.class);
-        generateIntelijVanilla.setModulename(intellijModule);
-        generateIntelijVanilla.setTaskname("StartVanillaServer");
-        generateIntelijVanilla.setWorkingdir(extension.getVanillaServerFolder());
-        generateIntelijVanilla.setDeps(deps);
-        generateIntelijVanilla.setOut(output.getAbsolutePath());
+//
+//        GenerateIntelijTask generateIntelijForge = project.getTasks().create("generateIntellijForgeTask", GenerateIntelijTask.class);
+//        generateIntelijForge.setModulename(intellijModule);
+//        generateIntelijForge.setTaskname("StartForgeServer");
+//        generateIntelijForge.setWorkingdir(extension.getForgeServerFolder());
+//
+//        GenerateIntelijTask generateIntelijVanilla = project.getTasks().create("generateIntellijVanillaTask", GenerateIntelijTask.class);
+//        generateIntelijVanilla.setModulename(intellijModule);
+//        generateIntelijVanilla.setTaskname("StartVanillaServer");
+//        generateIntelijVanilla.setWorkingdir(extension.getVanillaServerFolder());
+//        generateIntelijVanilla.setDeps(deps);
+//        generateIntelijVanilla.setOut(output.getAbsolutePath());
 
         //Setup Forge task
         SetupForgeServerV2 setupForgeServerV2 = project.getTasks().create("setupForgeServer", SetupForgeServerV2.class);
-        setupForgeServerV2.dependsOn(downloadForgeV2, generateStartTask, generateIntelijForge);
+        setupForgeServerV2.dependsOn(downloadForgeV2, generateStartTask, generateForgeRun);
         setupForgeServerV2.setLocation(new File(extension.getForgeServerFolder()));
         setupForgeServerV2.setExtension(extension);
 
         //Setup Vanilla task
         SetupVanillaServerV2 setupVanillaServerV2 = project.getTasks().create("setupVanillaServer", SetupVanillaServerV2.class);
-        setupVanillaServerV2.dependsOn(downloadSpongeVanillaV2, generateIntelijVanilla);
+        setupVanillaServerV2.dependsOn(downloadSpongeVanillaV2, generateVanillaRun);
         setupVanillaServerV2.setLocation(new File(extension.getVanillaServerFolder()));
         setupVanillaServerV2.setExtension(extension);
 
