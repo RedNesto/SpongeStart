@@ -13,6 +13,7 @@ public class SpongeStartExtension {
     public String spongeVanillaVersion = "";
     public String forge = "";
     public String online = "true";
+    public String buildDir;
 
 
     public String getSpongeVanillaVersion() {
@@ -87,4 +88,12 @@ public class SpongeStartExtension {
         this.online = online;
     }
 
+
+    public String getBuildDir() {
+        return buildDir;
+    }
+
+    public void setBuildDir(String buildDir) {
+        this.buildDir = buildDir;
+    }
 }

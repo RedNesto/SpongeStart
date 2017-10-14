@@ -105,17 +105,20 @@ public class SpongeStart implements Plugin<Project>  {
         //generate intelij tasks
         String intellijModule = getintellijModuleName(project);
 
-
-        SourceSetContainer cont = (SourceSetContainer) project.getProperties().get("sourceSets");
-        Set<File> f = cont.getByName(SourceSet.MAIN_SOURCE_SET_NAME).getOutput().getClassesDirs().getFiles();
         File output = null;
 
+        if (extension.getBuildDir() == null) {
+            SourceSetContainer cont = (SourceSetContainer) project.getProperties().get("sourceSets");
+            Set<File> f = cont.getByName(SourceSet.MAIN_SOURCE_SET_NAME).getOutput().getClassesDirs().getFiles();
 
-        for (File sf : f.iterator().next().getParentFile().getParentFile().listFiles()) {
-            if (sf.isDirectory() && new File(sf, "mcmod.info").exists()) {
-                output = sf;
-                break;
+            for (File sf : f) {
+                if (sf.exists()) {
+                    output = sf;
+                    break;
+                }
             }
+        } else {
+            output = new File(extension.getBuildDir());
         }
 
 
