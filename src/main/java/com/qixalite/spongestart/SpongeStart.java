@@ -110,7 +110,8 @@ public class SpongeStart implements Plugin<Project>  {
         //generate intelij tasks
         String intellijModule = getintellijModuleName(project);
 
-        String output = Optional.ofNullable(extension.getBuildDir()).orElse(project.getBuildDir().getAbsolutePath() + "/classes/java/main");
+        String buildDir = Optional.ofNullable(extension.getBuildDir()).orElse(project.getBuildDir().getAbsolutePath() + "/classes/java/main");
+        String resDir = Optional.ofNullable(extension.getResDir()).orElse(project.getBuildDir().getAbsolutePath() + "/resources/main");
 
         StringBuilder s = new StringBuilder("-classpath $PROJECT_DIR$/run/vanilla/server.jar:");
 
@@ -121,7 +122,7 @@ public class SpongeStart implements Plugin<Project>  {
                 filter(resolvedDependency -> !resolvedDependency.getName().startsWith("org.spongepowered:spongeapi")).forEach(
                         dep -> dep.getAllModuleArtifacts().forEach(artifact -> s.append(artifact.getFile().getAbsolutePath()).append(":"))
         );
-        s.append(output);
+        s.append(resDir).append(":").append(buildDir);
 
 
         GenerateRunTaskV2 generateVanillaRun = project.getTasks().create("GenerateVanillaRun", GenerateRunTaskV2.class);
