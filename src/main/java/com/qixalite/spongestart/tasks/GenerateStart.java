@@ -1,55 +1,36 @@
 package com.qixalite.spongestart.tasks;
 
 import org.apache.commons.io.IOUtils;
-import org.gradle.api.GradleException;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 
-import javax.tools.JavaCompiler;
-import javax.tools.JavaFileObject;
-import javax.tools.StandardJavaFileManager;
-import javax.tools.ToolProvider;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class GenerateStart extends SpongeStartTask {
 
-    private static final String[] filenames = {"StartServer.java"};
+    private static final List<String> files = Arrays.asList("StartServer.class", "StartServer$SpongeClassLoader.class");
 
     @OutputDirectory
-    private File outputDir = new File("test");
+    private File outputDir;
 
     @TaskAction
-    public void doStuff(){
-        try {
-            if (this.outputDir.exists()) {
-                this.outputDir.delete();
-            }
+    public void doStuff() {
 
-            this.outputDir.mkdirs();
-            List<File> files = new ArrayList<>();
+        if (!outputDir.exists()) outputDir.mkdir();
 
-            for (String name : GenerateStart.filenames){
-                InputStream link = this.getClass().getClassLoader().getResourceAsStream(name);
-                File outputFile = new File(outputDir, name);
+        for (String s : files) {
+            InputStream link = this.getClass().getClassLoader().getResourceAsStream(s);
+            File outputFile = new File(outputDir, s);
+            try {
                 IOUtils.copy(link, new FileOutputStream(outputFile));
-                files.add(outputFile);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-
-            JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-            if (compiler == null){
-                throw new GradleException("You need to run this in a JDK not in a JRE!!!");
-            }
-            StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
-            Iterable<? extends JavaFileObject> compilationUnits1 = fileManager.getJavaFileObjects(files.toArray(new File[files.size()]));
-
-            compiler.getTask(null, fileManager, null, null, null, compilationUnits1).call();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
