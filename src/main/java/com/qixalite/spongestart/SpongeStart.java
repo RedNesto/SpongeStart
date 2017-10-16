@@ -1,12 +1,12 @@
 package com.qixalite.spongestart;
 
 import com.qixalite.spongestart.tasks.CleanFolderTask;
-import com.qixalite.spongestart.tasks.ForgeDownloadTaskV2;
-import com.qixalite.spongestart.tasks.GenerateRunTaskV2;
-import com.qixalite.spongestart.tasks.GenerateStart;
-import com.qixalite.spongestart.tasks.SetupForgeServerV2;
-import com.qixalite.spongestart.tasks.SetupVanillaServerV2;
-import com.qixalite.spongestart.tasks.SpongeDownloadTaskV2;
+import com.qixalite.spongestart.tasks.ForgeDownloadTask;
+import com.qixalite.spongestart.tasks.GenerateRunTask;
+import com.qixalite.spongestart.tasks.GenerateStartTask;
+import com.qixalite.spongestart.tasks.SetupForgeServerTask;
+import com.qixalite.spongestart.tasks.SetupVanillaServerTask;
+import com.qixalite.spongestart.tasks.SpongeDownloadTask;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -41,7 +41,7 @@ public class SpongeStart implements Plugin<Project>  {
         File start = new File(startDir);
 
         //generate start task
-        GenerateStart generateStartTask = project.getTasks().create("generateStart", GenerateStart.class);
+        GenerateStartTask generateStartTask = project.getTasks().create("generateStart", GenerateStartTask.class);
         generateStartTask.setOutputDir(start);
         generateStartTask.setGroup(null);
 
@@ -49,22 +49,22 @@ public class SpongeStart implements Plugin<Project>  {
         project.getDependencies().add("runtime", project.files(start));
 
         //SpongeForge Download Task
-        SpongeDownloadTaskV2 downloadSpongeForgeV2 = project.getTasks().create("downloadSpongeForge", SpongeDownloadTaskV2.class);
-        downloadSpongeForgeV2.setLocation(new File(extension.getForgeServerFolder(), "mods" + File.separator + "sponge.jar"));
-        downloadSpongeForgeV2.setExtension(extension);
-        downloadSpongeForgeV2.setArtifact("spongeforge");
+        SpongeDownloadTask downloadSpongeForge = project.getTasks().create("downloadSpongeForge", SpongeDownloadTask.class);
+        downloadSpongeForge.setLocation(new File(extension.getForgeServerFolder(), "mods" + File.separator + "sponge.jar"));
+        downloadSpongeForge.setExtension(extension);
+        downloadSpongeForge.setArtifact("spongeforge");
 
         //SpongeVanilla Download Task
-        SpongeDownloadTaskV2 downloadSpongeVanillaV2 = project.getTasks().create("downloadSpongeVanilla", SpongeDownloadTaskV2.class);
-        downloadSpongeVanillaV2.setLocation(new File(extension.getVanillaServerFolder(), "server.jar"));
-        downloadSpongeVanillaV2.setExtension(extension);
-        downloadSpongeVanillaV2.setArtifact("spongevanilla");
+        SpongeDownloadTask downloadSpongeVanilla = project.getTasks().create("downloadSpongeVanilla", SpongeDownloadTask.class);
+        downloadSpongeVanilla.setLocation(new File(extension.getVanillaServerFolder(), "server.jar"));
+        downloadSpongeVanilla.setExtension(extension);
+        downloadSpongeVanilla.setArtifact("spongevanilla");
 
         //Forge Download Task
-        ForgeDownloadTaskV2 downloadForgeV2 = project.getTasks().create("downloadForge", ForgeDownloadTaskV2.class);
-        downloadForgeV2.dependsOn(downloadSpongeForgeV2);
-        downloadForgeV2.setLocation(new File(extension.getForgeServerFolder(), "setup.jar"));
-        downloadForgeV2.setExtension(extension);
+        ForgeDownloadTask downloadForge = project.getTasks().create("downloadForge", ForgeDownloadTask.class);
+        downloadForge.dependsOn(downloadSpongeForge);
+        downloadForge.setLocation(new File(extension.getForgeServerFolder(), "setup.jar"));
+        downloadForge.setExtension(extension);
 
         //generate intelij tasks
         String intellijModule = getintellijModuleName(project);
@@ -81,7 +81,7 @@ public class SpongeStart implements Plugin<Project>  {
         s.append(resDir).append(":").append(buildDir);
 
 
-        GenerateRunTaskV2 generateVanillaRun = project.getTasks().create("GenerateVanillaRun", GenerateRunTaskV2.class);
+        GenerateRunTask generateVanillaRun = project.getTasks().create("GenerateVanillaRun", GenerateRunTask.class);
         generateVanillaRun.setModule(intellijModule);
         generateVanillaRun.setName("StartVanillaServer");
         generateVanillaRun.setDir("file://$PROJECT_DIR$/"+extension.getVanillaServerFolder());
@@ -89,23 +89,23 @@ public class SpongeStart implements Plugin<Project>  {
         generateVanillaRun.setPargs("--scan-classpath");
         generateVanillaRun.setVargs(s.toString());
 
-        GenerateRunTaskV2 generateForgeRun = project.getTasks().create("GenerateForgeRun", GenerateRunTaskV2.class);
+        GenerateRunTask generateForgeRun = project.getTasks().create("GenerateForgeRun", GenerateRunTask.class);
         generateForgeRun.setModule(intellijModule);
         generateForgeRun.setName("StartForgeServer");
         generateForgeRun.setDir("file://$PROJECT_DIR$/"+extension.getForgeServerFolder());
         generateForgeRun.setMain("StartServer");
 
         //Setup Forge task
-        SetupForgeServerV2 setupForgeServerV2 = project.getTasks().create("setupForgeServer", SetupForgeServerV2.class);
-        setupForgeServerV2.dependsOn(downloadForgeV2, generateStartTask, generateForgeRun);
-        setupForgeServerV2.setLocation(new File(extension.getForgeServerFolder()));
-        setupForgeServerV2.setExtension(extension);
+        SetupForgeServerTask setupForgeServer = project.getTasks().create("setupForgeServer", SetupForgeServerTask.class);
+        setupForgeServer.dependsOn(downloadForge, generateStartTask, generateForgeRun);
+        setupForgeServer.setLocation(new File(extension.getForgeServerFolder()));
+        setupForgeServer.setExtension(extension);
 
         //Setup Vanilla task
-        SetupVanillaServerV2 setupVanillaServerV2 = project.getTasks().create("setupVanillaServer", SetupVanillaServerV2.class);
-        setupVanillaServerV2.dependsOn(downloadSpongeVanillaV2, generateVanillaRun);
-        setupVanillaServerV2.setLocation(new File(extension.getVanillaServerFolder()));
-        setupVanillaServerV2.setExtension(extension);
+        SetupVanillaServerTask setupVanillaServer = project.getTasks().create("setupVanillaServer", SetupVanillaServerTask.class);
+        setupVanillaServer.dependsOn(downloadSpongeVanilla, generateVanillaRun);
+        setupVanillaServer.setLocation(new File(extension.getVanillaServerFolder()));
+        setupVanillaServer.setExtension(extension);
 
         //clean tasks
         project.getTasks().create("cleanVanillaServer", CleanFolderTask.class)

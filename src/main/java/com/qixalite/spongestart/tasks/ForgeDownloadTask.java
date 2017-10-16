@@ -2,7 +2,7 @@ package com.qixalite.spongestart.tasks;
 
 import org.gradle.api.tasks.Input;
 
-public class ForgeDownloadTaskV2 extends DownloadTaskV2 {
+public class ForgeDownloadTask extends DownloadTask {
 
     private static final String FORGE_REPO = "https://files.minecraftforge.net/maven/net/minecraftforge/forge/";
 

@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-public class SetupForgeServerV2 extends SetupServerV2 {
+public class SetupForgeServerTask extends SetupServerTask {
 
     @Override
     public void setupServer() {

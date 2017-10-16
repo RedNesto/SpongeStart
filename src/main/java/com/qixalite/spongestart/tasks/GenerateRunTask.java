@@ -19,7 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 
-public class GenerateRunTaskV2 extends SpongeStartTask {
+public class GenerateRunTask extends SpongeStartTask {
 
 
     private String name;

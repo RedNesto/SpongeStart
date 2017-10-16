@@ -14,7 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-public abstract class DownloadTaskV2 extends SpongeStartTask {
+public abstract class DownloadTask extends SpongeStartTask {
 
     private File location;
     private SpongeStartExtension ext;

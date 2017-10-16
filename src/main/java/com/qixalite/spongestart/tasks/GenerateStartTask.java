@@ -11,7 +11,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
-public class GenerateStart extends SpongeStartTask {
+public class GenerateStartTask extends SpongeStartTask {
 
     private static final List<String> files = Arrays.asList("StartServer.class", "StartServer$SpongeClassLoader.class");
 

@@ -10,7 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-public class SetupVanillaServerV2 extends SetupServerV2 {
+public class SetupVanillaServerTask extends SetupServerTask {
 
     private static final String MOJANG_SERVER = "https://s3.amazonaws.com/Minecraft.Download/versions/";
 

@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-public abstract class SetupServerV2 extends SpongeStartTask{
+public abstract class SetupServerTask extends SpongeStartTask{
 
     private File location;
     private SpongeStartExtension ext;

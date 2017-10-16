@@ -11,7 +11,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-public class SpongeDownloadTaskV2 extends DownloadTaskV2 {
+public class SpongeDownloadTask extends DownloadTask {
 
     private String artifact;
     private static final String DOWNLOAD_API = "https://dl-api.spongepowered.org/v1/org.spongepowered/";
