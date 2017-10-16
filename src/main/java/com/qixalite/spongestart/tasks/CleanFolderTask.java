@@ -1,6 +1,8 @@
 package com.qixalite.spongestart.tasks;
 
 import org.apache.commons.io.FileUtils;
+import org.gradle.api.tasks.OutputDirectory;
+import org.gradle.api.tasks.SkipWhenEmpty;
 import org.gradle.api.tasks.TaskAction;
 
 import java.io.File;
@@ -10,6 +12,12 @@ public class CleanFolderTask extends SpongeStartTask {
 
     private File folder;
 
+    @SkipWhenEmpty
+    @OutputDirectory
+    public File getFolder() {
+        return folder;
+    }
+
     public void setFolder(File folder) {
         this.folder = folder;
     }
@@ -17,7 +25,7 @@ public class CleanFolderTask extends SpongeStartTask {
     @TaskAction
     public void doStuff() {
         try {
-            FileUtils.cleanDirectory(folder);
+            FileUtils.cleanDirectory(getFolder());
         } catch (IOException e) {
             e.printStackTrace();
         }

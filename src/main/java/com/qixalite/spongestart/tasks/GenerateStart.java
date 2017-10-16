@@ -15,17 +15,21 @@ public class GenerateStart extends SpongeStartTask {
 
     private static final List<String> files = Arrays.asList("StartServer.class", "StartServer$SpongeClassLoader.class");
 
-    @OutputDirectory
     private File outputDir;
+
+    @OutputDirectory
+    public File getOutputDir() {
+        return outputDir;
+    }
 
     @TaskAction
     public void doStuff() {
 
-        if (!outputDir.exists()) outputDir.mkdir();
+        if (!getOutputDir().exists()) getOutputDir().mkdir();
 
         for (String s : files) {
             InputStream link = this.getClass().getClassLoader().getResourceAsStream(s);
-            File outputFile = new File(outputDir, s);
+            File outputFile = new File(getOutputDir(), s);
             try {
                 IOUtils.copy(link, new FileOutputStream(outputFile));
             } catch (IOException e) {

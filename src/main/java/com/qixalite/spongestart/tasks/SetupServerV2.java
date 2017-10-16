@@ -2,6 +2,7 @@ package com.qixalite.spongestart.tasks;
 
 import com.qixalite.spongestart.SpongeStartExtension;
 import org.apache.commons.io.FileUtils;
+import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 
 import java.io.File;
@@ -13,6 +14,7 @@ public abstract class SetupServerV2 extends SpongeStartTask{
     private File location;
     private SpongeStartExtension ext;
 
+    @OutputDirectory
     public final File getLocation() {
         return location;
     }

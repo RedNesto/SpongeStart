@@ -6,6 +6,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.gradle.api.GradleException;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
 
 import java.io.File;
@@ -16,6 +18,11 @@ public abstract class DownloadTaskV2 extends SpongeStartTask {
 
     private File location;
     private SpongeStartExtension ext;
+
+    @OutputFile
+    public final File getLocation() {
+        return location;
+    }
 
     public final void setLocation(File location) {
         this.location = location;
@@ -41,12 +48,15 @@ public abstract class DownloadTaskV2 extends SpongeStartTask {
                 FileUtils.copyURLToFile(new URL(url), cached);
             }
 
-            FileUtils.copyFile(cached, location);
+            FileUtils.copyFile(cached, getLocation());
         } catch (IOException e) {
             throw new GradleException("Failed to download: " + url + " : " + e.getMessage());
         }
     }
 
+    @Input
     public abstract String getDownloadUrl();
+
+
 
 }
