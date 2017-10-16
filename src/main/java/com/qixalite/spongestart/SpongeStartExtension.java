@@ -4,34 +4,18 @@ import java.io.File;
 
 public class SpongeStartExtension {
 
-    public String minecraft = "";
-    public String type = "";
-    public String forgeServerFolder = "run" + File.separator + "forge";
-    public String vanillaServerFolder = "run" + File.separator + "vanilla";
-    public String cacheFolder = "";
-    public String spongeForgeVersion = "";
-    public String spongeVanillaVersion = "";
-    public String forge = "";
-    public String online = "true";
-    public String buildDir;
-    public String resDir;
-
-
-    public String getSpongeVanillaVersion() {
-        return spongeVanillaVersion;
-    }
-
-    public void setSpongeVanillaVersion(String spongeVanillaVersion) {
-        this.spongeVanillaVersion = spongeVanillaVersion;
-    }
-
-    public String getSpongeForgeVersion() {
-        return spongeForgeVersion;
-    }
-
-    public void setSpongeForgeVersion(String spongeForgeVersion) {
-        this.spongeForgeVersion = spongeForgeVersion;
-    }
+    private String minecraft;
+    private String type;
+    private String spongeForge;
+    private String spongeVanilla;
+    private String online = "true";
+    private String forgeServerFolder = "run" + File.separator + "forge";
+    private String vanillaServerFolder = "run" + File.separator + "vanilla";
+    private String buildClassesFolder;
+    private String resourcesFolder;
+    private String cacheFolder;
+    private String startFolder;
+    private String forge;
 
     public String getMinecraft() {
         return minecraft;
@@ -49,36 +33,20 @@ public class SpongeStartExtension {
         this.type = type;
     }
 
-    public String getForgeServerFolder() {
-        return this.forgeServerFolder;
+    public String getSpongeForge() {
+        return spongeForge;
     }
 
-    public void setForgeServerFolder(String forgeServerFolder) {
-        this.forgeServerFolder = forgeServerFolder;
+    public void setSpongeForge(String spongeForge) {
+        this.spongeForge = spongeForge;
     }
 
-    public String getVanillaServerFolder() {
-        return this.vanillaServerFolder;
+    public String getSpongeVanilla() {
+        return spongeVanilla;
     }
 
-    public void setVanillaServerFolder(String vanillaServerFolder) {
-        this.vanillaServerFolder = vanillaServerFolder;
-    }
-
-    public String getCacheFolder() {
-        return cacheFolder;
-    }
-
-    public void setCacheFolder(String cacheFolder) {
-        this.cacheFolder = cacheFolder;
-    }
-
-    public String getForge() {
-        return forge;
-    }
-
-    public void setForge(String forge) {
-        this.forge = forge;
+    public void setSpongeVanilla(String spongeVanilla) {
+        this.spongeVanilla = spongeVanilla;
     }
 
     public String getOnline() {
@@ -89,20 +57,60 @@ public class SpongeStartExtension {
         this.online = online;
     }
 
-
-    public String getBuildDir() {
-        return buildDir;
+    public String getForgeServerFolder() {
+        return forgeServerFolder;
     }
 
-    public void setBuildDir(String buildDir) {
-        this.buildDir = buildDir;
+    public void setForgeServerFolder(String forgeServerFolder) {
+        this.forgeServerFolder = forgeServerFolder;
     }
 
-    public String getResDir() {
-        return resDir;
+    public String getVanillaServerFolder() {
+        return vanillaServerFolder;
     }
 
-    public void setResDir(String resDir) {
-        this.resDir = resDir;
+    public void setVanillaServerFolder(String vanillaServerFolder) {
+        this.vanillaServerFolder = vanillaServerFolder;
     }
+
+    public String getBuildClassesFolder() {
+        return buildClassesFolder;
+    }
+
+    public void setBuildClassesFolder(String buildClassesFolder) {
+        this.buildClassesFolder = buildClassesFolder;
+    }
+
+    public String getResourcesFolder() {
+        return resourcesFolder;
+    }
+
+    public void setResourcesFolder(String resourcesFolder) {
+        this.resourcesFolder = resourcesFolder;
+    }
+
+    public String getCacheFolder() {
+        return cacheFolder;
+    }
+
+    public void setCacheFolder(String cacheFolder) {
+        this.cacheFolder = cacheFolder;
+    }
+
+    public String getStartFolder() {
+        return startFolder;
+    }
+
+    public void setStartFolder(String startFolder) {
+        this.startFolder = startFolder;
+    }
+
+    public String getForge() {
+        return forge;
+    }
+
+    public void setForge(String forge) {
+        this.forge = forge;
+    }
+
 }

@@ -33,16 +33,20 @@ public class SpongeStart implements Plugin<Project>  {
 
     private void setupTasks(SpongeStartExtension extension, Project project) {
 
-        extension.setCacheFolder(project.getGradle().getGradleUserHomeDir() + "/caches/SpongeStart/");
-        File startDir = new File(extension.getCacheFolder(), "start");
+        String buildDir = Optional.ofNullable(extension.getBuildClassesFolder()).orElse(project.getBuildDir().getAbsolutePath() + "/classes/java/main");
+        String resDir = Optional.ofNullable(extension.getResourcesFolder()).orElse(project.getBuildDir().getAbsolutePath() + "/resources/main");
+        String cacheDir = Optional.ofNullable(extension.getCacheFolder()).orElse(project.getGradle().getGradleUserHomeDir() + "/caches/SpongeStart/");
+        String startDir = Optional.ofNullable(extension.getStartFolder()).orElse(project.getGradle().getGradleUserHomeDir() + "/start");
+
+        File start = new File(startDir);
 
         //generate start task
         GenerateStart generateStartTask = project.getTasks().create("generateStart", GenerateStart.class);
-        generateStartTask.setOutputDir(startDir);
+        generateStartTask.setOutputDir(start);
         generateStartTask.setGroup(null);
 
         project.getConfigurations().maybeCreate(PROVIDED_SCOPE);
-        project.getDependencies().add("runtime", project.files(startDir));
+        project.getDependencies().add("runtime", project.files(start));
 
         //SpongeForge Download Task
         SpongeDownloadTaskV2 downloadSpongeForgeV2 = project.getTasks().create("downloadSpongeForge", SpongeDownloadTaskV2.class);
@@ -64,9 +68,6 @@ public class SpongeStart implements Plugin<Project>  {
 
         //generate intelij tasks
         String intellijModule = getintellijModuleName(project);
-
-        String buildDir = Optional.ofNullable(extension.getBuildDir()).orElse(project.getBuildDir().getAbsolutePath() + "/classes/java/main");
-        String resDir = Optional.ofNullable(extension.getResDir()).orElse(project.getBuildDir().getAbsolutePath() + "/resources/main");
 
         StringBuilder s = new StringBuilder("-classpath $PROJECT_DIR$/run/vanilla/server.jar:");
 
@@ -114,7 +115,7 @@ public class SpongeStart implements Plugin<Project>  {
                 .setFolder(new File(extension.getForgeServerFolder()));
 
         project.getTasks().create("cleanSpongeStartCache", CleanFolderTask.class)
-                .setFolder(new File(extension.getCacheFolder()));
+                .setFolder(new File(cacheDir));
 
 
     }

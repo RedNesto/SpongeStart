@@ -25,7 +25,7 @@ public class SpongeDownloadTaskV2 extends DownloadTaskV2 {
         CloseableHttpClient client = HttpClientBuilder.create().build();
         String artifactVersion = getArtifactVersion();
 
-        if (!artifactVersion.isEmpty()) {
+        if (artifactVersion != null) {
             HttpGet req = new HttpGet(DOWNLOAD_API + artifact + "/downloads/" + artifactVersion);
 
             try {
@@ -53,7 +53,7 @@ public class SpongeDownloadTaskV2 extends DownloadTaskV2 {
     }
 
     private String getArtifactVersion() {
-        return artifact.equalsIgnoreCase("spongeforge") ? getExtension().getSpongeForgeVersion() : getExtension().getSpongeVanillaVersion();
+        return artifact.equalsIgnoreCase("spongeforge") ? getExtension().getSpongeForge() : getExtension().getSpongeVanilla();
     }
 
     private void setDependencies(JSONObject obj) {
