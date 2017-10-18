@@ -42,8 +42,8 @@ public abstract class DownloadTask extends SpongeStartTask {
         String url = getDownloadUrl();
 
         try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
-            File cached = new File(getExtension().getCacheFolder(), "downloads/" + url.substring(url.lastIndexOf("/") + 1));
-            int size = Integer.valueOf(client.execute(new HttpGet(url)).getLastHeader("Content-Length").getValue());
+            File cached = new File(getExtension().getCacheFolder(), "downloads/" + url.substring(url.lastIndexOf('/') + 1));
+            int size = Integer.parseInt(client.execute(new HttpGet(url)).getLastHeader("Content-Length").getValue());
             if (!(cached.exists() && cached.length() == size)) {
                 FileUtils.copyURLToFile(new URL(url), cached);
             }

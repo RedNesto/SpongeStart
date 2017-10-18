@@ -2,6 +2,7 @@ package com.qixalite.spongestart.tasks;
 
 import com.qixalite.spongestart.SpongeStartExtension;
 import org.apache.commons.io.FileUtils;
+import org.gradle.api.GradleException;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 
@@ -44,7 +45,7 @@ public abstract class SetupServerTask extends SpongeStartTask{
         try {
             FileUtils.writeStringToFile(new File(location, "eula.txt"), "eula=true", Charset.defaultCharset());
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new GradleException("Failed to accept eula: " + e.getMessage());
         }
     }
 
@@ -56,7 +57,7 @@ public abstract class SetupServerTask extends SpongeStartTask{
             FileUtils.writeStringToFile(prop, "\nallow-flight=true", Charset.defaultCharset(), true);
             FileUtils.writeStringToFile(prop, "\nonline-mode=" + ext.getOnline(), Charset.defaultCharset(), true);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new GradleException("Failed to tweak server.properties: " + e.getMessage());
         }
     }
 

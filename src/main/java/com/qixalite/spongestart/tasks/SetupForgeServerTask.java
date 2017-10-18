@@ -1,6 +1,7 @@
 package com.qixalite.spongestart.tasks;
 
 import org.apache.commons.io.FileUtils;
+import org.gradle.api.GradleException;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class SetupForgeServerTask extends SetupServerTask {
             FileUtils.deleteQuietly(new File(getLocation(), "mods/mod_list.json"));
 
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            throw new GradleException("Failed setup forge: " + e.getMessage());
         }
 
     }
@@ -51,7 +52,7 @@ public class SetupForgeServerTask extends SetupServerTask {
                     Charset.defaultCharset(), true);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new GradleException("Failed to tweak forge config: " + e.getMessage());
         }
     }
 

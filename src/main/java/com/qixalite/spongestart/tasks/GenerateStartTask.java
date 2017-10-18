@@ -1,6 +1,7 @@
 package com.qixalite.spongestart.tasks;
 
 import org.apache.commons.io.IOUtils;
+import org.gradle.api.GradleException;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 
@@ -33,7 +34,7 @@ public class GenerateStartTask extends SpongeStartTask {
             try {
                 IOUtils.copy(link, new FileOutputStream(outputFile));
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new GradleException("Failed to generate Start class: " + e.getMessage());
             }
         }
     }

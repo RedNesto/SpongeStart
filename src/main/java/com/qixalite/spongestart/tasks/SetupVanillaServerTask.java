@@ -37,13 +37,13 @@ public class SetupVanillaServerTask extends SetupServerTask {
 
     private void downloadLibrary(CloseableHttpClient client, String url, File location) {
         try {
-            File cached = new File(getExtension().getCacheFolder(), "downloads/" + url.substring(url.lastIndexOf("/") + 1));
-            int size = Integer.valueOf(client.execute(new HttpGet(url)).getLastHeader("Content-Length").getValue());
+            File cached = new File(getExtension().getCacheFolder(), "downloads/" + url.substring(url.lastIndexOf('/') + 1));
+            int size = Integer.parseInt(client.execute(new HttpGet(url)).getLastHeader("Content-Length").getValue());
             if (!(cached.exists() && cached.length() == size)) {
                 FileUtils.copyURLToFile(new URL(url), cached);
             }
 
-            FileUtils.copyFile(cached, new File(location + "/" + url.substring(url.lastIndexOf("/") + 1)));
+            FileUtils.copyFile(cached, new File(location, url.substring(url.lastIndexOf('/') + 1)));
         } catch (IOException e) {
             throw new GradleException("Failed to download: " + url + " : " + e.getMessage());
         }

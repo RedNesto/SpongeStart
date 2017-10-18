@@ -1,5 +1,6 @@
 package com.qixalite.spongestart.tasks;
 
+import org.gradle.api.GradleException;
 import org.gradle.api.tasks.TaskAction;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -109,7 +110,7 @@ public class GenerateRunTask extends SpongeStartTask {
             transformer.transform(input, output);
 
         } catch (ParserConfigurationException | SAXException | IOException | TransformerException e) {
-            e.printStackTrace();
+            throw new GradleException("Something went wrong with your workspace.xml: " + e.getMessage());
         }
     }
 
