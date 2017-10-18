@@ -44,9 +44,9 @@ tasks.publishPlugins.dependsOn tasks.setupPluginUpload
 
 pluginBundle {
   website = 'https://www.gradle.org/'
-  vcsUrl = 'https://github.com/qixalite/spongestart/'
-  description = "Gradle plugin to run sponge inside your workspace."
-  tags = ["sponge", "minecraft"]
+  vcsUrl = 'https://github.com/ImMorpheus/SpongeStart'
+  description = 'Gradle plugin to run sponge inside your workspace.'
+  tags = ['sponge', 'minecraft']
 
   plugins {
     spongestart {
