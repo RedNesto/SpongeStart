@@ -9,18 +9,17 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 
 public class GenerateRunTask extends SpongeStartTask {
-
 
     private String name;
     private String main;
@@ -32,15 +31,37 @@ public class GenerateRunTask extends SpongeStartTask {
     @TaskAction
     public void doStuff() {
 
+        File f = new File(".idea/workspace.xml");
+
         try {
-            Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().
-                    parse(".idea/workspace.xml");
+
+            Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(f);
+
             Node run = null;
             NodeList component = document.getElementsByTagName("component");
             for (int i = 0; i < component.getLength(); i++) {
                 if (component.item(i).getAttributes().getNamedItem("name").getNodeValue().equals("RunManager")) {
                     run = component.item(i);
                     break;
+                }
+            }
+
+            int size = -1;
+
+            while (size != 0) {
+                size = 0;
+                Element e = (Element) run.getChildNodes();
+                NodeList conf = e.getElementsByTagName("configuration");
+                for (int c = 0; c < conf.getLength(); c++) {
+                    Node n = conf.item(c);
+                    Node nm = n.getAttributes().getNamedItem("name");
+                    if (nm != null) {
+                        String name = nm.getNodeValue();
+                        if (name.equals(this.name)) {
+                            size++;
+                            e.removeChild(n);
+                        }
+                    }
                 }
             }
 
@@ -82,9 +103,10 @@ public class GenerateRunTask extends SpongeStartTask {
             run.appendChild(configuration);
 
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            Result output = new StreamResult(f);
+            Source input = new DOMSource(document);
 
-            StreamResult result = new StreamResult(new File(".idea/workspace.xml"));
-            transformer.transform(new DOMSource(document), result);
+            transformer.transform(input, output);
 
         } catch (ParserConfigurationException | SAXException | IOException | TransformerException e) {
             e.printStackTrace();
