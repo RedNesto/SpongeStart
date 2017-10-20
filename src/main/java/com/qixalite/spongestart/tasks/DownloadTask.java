@@ -28,7 +28,7 @@ public abstract class DownloadTask extends SpongeStartTask {
         this.location = location;
     }
 
-    public final SpongeStartExtension getExtension() {
+    final SpongeStartExtension getExtension() {
         return this.ext;
     }
 

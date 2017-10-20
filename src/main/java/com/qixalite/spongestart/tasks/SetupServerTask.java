@@ -25,7 +25,7 @@ public abstract class SetupServerTask extends SpongeStartTask{
     }
 
 
-    public final SpongeStartExtension getExtension() {
+    final SpongeStartExtension getExtension() {
         return this.ext;
     }
 
