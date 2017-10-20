@@ -1,7 +1,7 @@
 # SpongeStart [![forthebadge](https://forthebadge.com/images/badges/contains-cat-gifs.svg)](https://forthebadge.com) 
 [![GitHub 
 stars](https://img.shields.io/github/stars/ImMorpheus/SpongeStart.svg)](https://github.com/ImMorpheus/SpongeStart/stargazers) [![GitHub 
-issues](https://img.shields.io/github/issues/ImMorpheus/SpongeStart.svg)](https://github.com/ImMorpheusSpongeStart/issues) [![Latest Version](https://img.shields.io/badge/gradleplugin-v2.0.2-green.svg)](https://plugins.gradle.org/plugin/com.qixalite.spongestart2)
+issues](https://img.shields.io/github/issues/ImMorpheus/SpongeStart.svg)](https://github.com/ImMorpheus/SpongeStart/issues) [![Latest Version](https://img.shields.io/badge/SpongeStart-v3.0.0-green.svg)](https://plugins.gradle.org/plugin/com.qixalite.spongestart2)
 
 Gradle plugin to run sponge inside your workspace. Based on the SpongeStart by thomas15v.
 I’ve fixed the SpongeVanilla issue and added a few things.
@@ -36,46 +36,50 @@ version_checking {
 ```
 
 
-## Example Build.gradle for your project
+## Example build.gradle for your project
 ```groovy
 plugins {
-  id 'com.qixalite.spongestart2' version '2.0.2'
-  id "java"
+    id 'com.qixalite.spongestart2' version '3.0.0'
 }
 
 spongestart {
-   //optional* settings
-   minecraft '1.10.2'
-   type 'bleeding' //default to stable
-   spongeForgeVersion '1.10.2-2202-5.1.0-BETA-2042'
-   spongeVanillaVersion '1.10.2-5.0.0-BETA-89'
-   online 'false' //default to true (online-mode in server.properties)
+    minecraft '1.11.2'
 }
 
 ```
+
 Note: you have to define either minecraft or the sponge specific version for the platform you plan to setup.
 
-## Commands
+## SpongeStart tasks
+-----------------
+cleanForgeServer - Clean Forge server folder
+cleanSpongeStartCache - Clean SpongeStart cache folder
+cleanVanillaServer - Clean Vanilla server folder
+downloadForge - Download Forge jar
+downloadSpongeForge - Download SpongeForge jar
+downloadSpongeVanilla - Download SpongeVanilla jar
+GenerateForgeRun - Generate Forge run configuration to start a SpongeForge server
+GenerateVanillaRun - Generate Vanilla run configuration to start a SpongeVanilla server
+setupForgeServer - Setup a SpongeForge server
+setupVanillaServer - Setup a SpongeVanilla server
 
->`gradle setupServer`
-> Generates a forge and vanilla server + intelij run configurations.
 
->`gradle setupVanilla`
-> Generates a vanilla server + intelij run configurations.
+## Advanced
 
->`gradle setupForge`
-> Generates a forge server + intelij run configurations.
+Not really _advanced_, but here's the full list of build.gradle properties.
 
-
-## Run Configurations for your IDE (in case they don't automatic generate)
-
-### Start SpongeForge Server
->
-- **Mainclass**: `StartServer`
-- **Working Directory**: `run/forge`
-
-### Start SpongeVanilla Server
->
-- **Mainclass**: `StartServer`
-- **Working Directory**: `run/vanilla`
-- **arguments**: `-scan-classpath`
+```groovy
+spongestart {
+    minecraft ''            //minecraft version
+    type ''                 //build type (bleeding/stable). Default to stable
+    spongeForge ''          //SpongeForge version
+    spongeVanilla ''        //SpongeVanilla version
+    online ''               //online-mode (true/false). Default to true
+    forgeServerFolder ''    //absolute path to the forge server folder. Default to run/forge
+    vanillaServerFolder ''  //absolute path to the vanilla server folder. Default to run/vanilla
+    buildClassesFolder ''   //absolute path to the build classes folder. Default to build/classes/java/main
+    resourcesFolder ''      //absolute path to the resources folder. Default to build/resources
+    cacheFolder ''          //absolute path to the SpongeStart cache folder for downloads. Default to .gradle/caches/SpongeStart
+    startFolder ''          //absolute path to the folder for the SpongeStart start class for forge server. Default to .gradle/start
+}
+```
