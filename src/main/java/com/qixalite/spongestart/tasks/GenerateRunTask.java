@@ -36,66 +36,63 @@ public class GenerateRunTask extends SpongeStartTask {
 
         try {
 
-            Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(f);
+            Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(f);
 
             Node run = null;
-            NodeList component = document.getElementsByTagName("component");
-            for (int i = 0; i < component.getLength(); i++) {
-                if (component.item(i).getAttributes().getNamedItem("name").getNodeValue().equals("RunManager")) {
-                    run = component.item(i);
+            NodeList comp = doc.getElementsByTagName("component");
+            for (int i = 0; i < comp.getLength(); i++) {
+                if (comp.item(i).getAttributes().getNamedItem("name").getNodeValue().equals("RunManager")) {
+                    run = comp.item(i);
                     break;
                 }
             }
 
-            int size = -1;
+            int count = -1;
 
-            while (size != 0) {
-                size = 0;
+            while (count != 0) {
+                count = 0;
                 Element e = (Element) run.getChildNodes();
                 NodeList conf = e.getElementsByTagName("configuration");
                 for (int c = 0; c < conf.getLength(); c++) {
                     Node n = conf.item(c);
                     Node nm = n.getAttributes().getNamedItem("name");
-                    if (nm != null) {
-                        String name = nm.getNodeValue();
-                        if (name.equals(this.name)) {
-                            size++;
-                            e.removeChild(n);
-                        }
+                    if (nm != null && nm.getNodeValue().equals(this.name)) {
+                        count++;
+                        e.removeChild(n);
                     }
                 }
             }
 
-            Element configuration = document.createElement("configuration");
+            Element configuration = doc.createElement("configuration");
             configuration.setAttribute("name", name );
             configuration.setAttribute("type", "Application");
 
-            Element mainName = document.createElement("option");
+            Element mainName = doc.createElement("option");
             mainName.setAttribute("name", "MAIN_CLASS_NAME");
             mainName.setAttribute("value", main);
 
-            Element VMargs = document.createElement("option");
-            Element programParameters = document.createElement("option");
+            Element virtualParameters = doc.createElement("option");
+            Element programParameters = doc.createElement("option");
 
-            VMargs.setAttribute("name", "VM_PARAMETERS");
+            virtualParameters.setAttribute("name", "VM_PARAMETERS");
 
-            VMargs.setAttribute("value", vargs);
+            virtualParameters.setAttribute("value", vargs);
 
             programParameters.setAttribute("name", "PROGRAM_PARAMETERS");
             programParameters.setAttribute("value", pargs);
 
 
-            Element workingDir = document.createElement("option");
+            Element workingDir = doc.createElement("option");
             workingDir.setAttribute("name", "WORKING_DIRECTORY");
             workingDir.setAttribute("value", dir);
 
-            Element moduleName = document.createElement("module");
+            Element moduleName = doc.createElement("module");
             moduleName.setAttribute("name", module);
 
 
             configuration.appendChild(mainName);
 
-            configuration.appendChild(VMargs);
+            configuration.appendChild(virtualParameters);
             configuration.appendChild(programParameters);
 
             configuration.appendChild(workingDir);
@@ -105,7 +102,7 @@ public class GenerateRunTask extends SpongeStartTask {
 
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             Result output = new StreamResult(f);
-            Source input = new DOMSource(document);
+            Source input = new DOMSource(doc);
 
             transformer.transform(input, output);
 

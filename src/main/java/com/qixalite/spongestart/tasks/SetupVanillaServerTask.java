@@ -29,8 +29,8 @@ public class SetupVanillaServerTask extends SetupServerTask {
 
         try {
             client.close();
-        } catch (IOException ignored) {
-
+        } catch (IOException e) {
+            throw new GradleException("Something went wrong: " + e.getMessage());
         }
 
     }
