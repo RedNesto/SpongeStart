@@ -1,6 +1,7 @@
 package com.qixalite.spongestart.tasks;
 
 import org.apache.commons.io.FileUtils;
+import org.gradle.api.GradleException;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.SkipWhenEmpty;
 import org.gradle.api.tasks.TaskAction;
@@ -27,7 +28,7 @@ public class CleanFolderTask extends SpongeStartTask {
         try {
             FileUtils.cleanDirectory(getFolder());
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new GradleException("Failed to clean folder: " + e.getMessage());
         }
     }
 }
