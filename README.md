@@ -51,17 +51,29 @@ spongestart {
 Note: you have to define either minecraft or the sponge specific version for the platform you plan to setup.
 
 ## SpongeStart tasks
------------------
-cleanForgeServer - Clean Forge server folder
-cleanSpongeStartCache - Clean SpongeStart cache folder
-cleanVanillaServer - Clean Vanilla server folder
-downloadForge - Download Forge jar
-downloadSpongeForge - Download SpongeForge jar
-downloadSpongeVanilla - Download SpongeVanilla jar
-GenerateForgeRun - Generate Forge run configuration to start a SpongeForge server
-GenerateVanillaRun - Generate Vanilla run configuration to start a SpongeVanilla server
-setupForgeServer - Setup a SpongeForge server
-setupVanillaServer - Setup a SpongeVanilla server
+
+----------------- 
+
+cleanForgeServer - Clean Forge server folder 
+
+cleanSpongeStartCache - Clean SpongeStart cache folder 
+
+cleanVanillaServer - Clean Vanilla server folder 
+
+downloadForge - Download Forge jar 
+
+downloadSpongeForge - Download SpongeForge jar 
+
+downloadSpongeVanilla - Download SpongeVanilla jar 
+
+GenerateForgeRun - Generate Forge run configuration to start a SpongeForge server 
+
+GenerateVanillaRun - Generate Vanilla run configuration to start a SpongeVanilla server 
+
+setupForgeServer - Setup a SpongeForge server 
+
+setupVanillaServer - Setup a SpongeVanilla server 
+
 
 
 ## Advanced
