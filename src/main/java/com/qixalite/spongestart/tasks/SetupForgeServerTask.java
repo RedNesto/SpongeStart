@@ -31,7 +31,7 @@ public class SetupForgeServerTask extends SetupServerTask {
             FileUtils.deleteQuietly(new File(getLocation(), "mods/mod_list.json"));
 
         } catch (IOException | InterruptedException e) {
-            throw new GradleException("Failed setup forge: " + e.getMessage());
+            throw new GradleException("Failed to setup forge: " + e.getMessage());
         }
 
     }
