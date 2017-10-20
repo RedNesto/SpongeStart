@@ -38,6 +38,8 @@ public class SpongeStart implements Plugin<Project>  {
         String cacheDir = Optional.ofNullable(extension.getCacheFolder()).orElse(project.getGradle().getGradleUserHomeDir() + "/caches/SpongeStart/");
         String startDir = Optional.ofNullable(extension.getStartFolder()).orElse(project.getGradle().getGradleUserHomeDir() + "/start");
 
+        extension.setCacheFolder(cacheDir);
+
         //generate start task
         File start = new File(startDir);
         GenerateStartTask generateStartTask = project.getTasks().create("generateStart", GenerateStartTask.class);
