@@ -1,7 +1,7 @@
 # SpongeStart [![forthebadge](https://forthebadge.com/images/badges/contains-cat-gifs.svg)](https://forthebadge.com) 
 [![GitHub 
 stars](https://img.shields.io/github/stars/ImMorpheus/SpongeStart.svg)](https://github.com/ImMorpheus/SpongeStart/stargazers) [![GitHub 
-issues](https://img.shields.io/github/issues/ImMorpheus/SpongeStart.svg)](https://github.com/ImMorpheus/SpongeStart/issues) [![Latest Version](https://img.shields.io/badge/SpongeStart-v3.0.0-green.svg)](https://plugins.gradle.org/plugin/com.qixalite.spongestart2)
+issues](https://img.shields.io/github/issues/ImMorpheus/SpongeStart.svg)](https://github.com/ImMorpheus/SpongeStart/issues) [![Latest Version](https://img.shields.io/badge/SpongeStart-v3.0.1-green.svg)](https://plugins.gradle.org/plugin/com.qixalite.spongestart2)
 
 Gradle plugin to run sponge inside your workspace. Based on the SpongeStart by thomas15v.
 I’ve fixed the SpongeVanilla issue and added a few things.
@@ -39,7 +39,7 @@ version_checking {
 ## Example build.gradle for your project
 ```groovy
 plugins {
-    id 'com.qixalite.spongestart2' version '3.0.0'
+    id 'com.qixalite.spongestart2' version '3.0.1'
 }
 
 spongestart {
