@@ -5,7 +5,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.gradle.api.GradleException;
-import org.gradle.api.tasks.Input;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -21,7 +20,6 @@ public class SpongeDownloadTask extends DownloadTask {
         this.artifact = artifact;
     }
 
-    @Input
     @Override
     public String getDownloadUrl() {
         CloseableHttpClient client = HttpClientBuilder.create().build();
@@ -54,7 +52,6 @@ public class SpongeDownloadTask extends DownloadTask {
 
     }
 
-    @Input
     private String getArtifactVersion() {
         return artifact.equalsIgnoreCase("spongeforge") ? getExtension().getSpongeForge() : getExtension().getSpongeVanilla();
     }

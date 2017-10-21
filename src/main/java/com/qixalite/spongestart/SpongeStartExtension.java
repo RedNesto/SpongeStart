@@ -5,7 +5,7 @@ import java.io.File;
 public class SpongeStartExtension {
 
     private String minecraft;
-    private String type;
+    private String type = "";
     private String spongeForge;
     private String spongeVanilla;
     private String online = "true";
