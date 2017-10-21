@@ -35,7 +35,7 @@ public class SpongeStart implements Plugin<Project>  {
 
         String buildDir = Optional.ofNullable(extension.getBuildClassesFolder()).orElse(project.getBuildDir().getAbsolutePath() + "/classes/java/main");
         String resDir = Optional.ofNullable(extension.getResourcesFolder()).orElse(project.getBuildDir().getAbsolutePath() + "/resources/main");
-        String cacheDir = Optional.ofNullable(extension.getCacheFolder()).orElse(project.getGradle().getGradleUserHomeDir() + "/caches/SpongeStart/");
+        String cacheDir = Optional.ofNullable(extension.getCacheFolder()).orElse(project.getGradle().getGradleUserHomeDir() + "/caches/SpongeStart");
         String startDir = Optional.ofNullable(extension.getStartFolder()).orElse(project.getGradle().getGradleUserHomeDir() + "/start");
 
         extension.setCacheFolder(cacheDir);
