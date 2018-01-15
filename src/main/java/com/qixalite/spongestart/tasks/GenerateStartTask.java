@@ -2,7 +2,6 @@ package com.qixalite.spongestart.tasks;
 
 import org.apache.commons.io.IOUtils;
 import org.gradle.api.GradleException;
-import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 
 import java.io.File;
@@ -18,28 +17,34 @@ public class GenerateStartTask extends SpongeStartTask {
 
     private File outputDir;
 
-    @OutputDirectory
     public File getOutputDir() {
         return outputDir;
-    }
-
-    @TaskAction
-    public void doStuff() {
-
-        if (!getOutputDir().exists()) getOutputDir().mkdir();
-
-        for (String s : files) {
-            InputStream link = this.getClass().getClassLoader().getResourceAsStream(s);
-            File outputFile = new File(getOutputDir(), s);
-            try {
-                IOUtils.copy(link, new FileOutputStream(outputFile));
-            } catch (IOException e) {
-                throw new GradleException("Failed to generate Start class: " + e.getMessage());
-            }
-        }
     }
 
     public void setOutputDir(File outputDir) {
         this.outputDir = outputDir;
     }
+
+    @TaskAction
+    public void doStuff() {
+        if (!getOutputDir().exists()) {
+            boolean result = getOutputDir().mkdir();
+            if (!result) {
+                throw new GradleException("There was a problem creating the start folder.");
+            }
+        }
+
+        for (String s : files) {
+            InputStream link = this.getClass().getClassLoader().getResourceAsStream(s);
+            File outputFile = new File(getOutputDir(), s);
+            if (!outputFile.exists()) {
+                try {
+                    IOUtils.copy(link, new FileOutputStream(outputFile));
+                } catch (IOException e) {
+                    throw new GradleException("Failed to generate Start class: " + e.getMessage());
+                }
+            }
+        }
+    }
+
 }
