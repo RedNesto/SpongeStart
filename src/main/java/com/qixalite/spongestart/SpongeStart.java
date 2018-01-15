@@ -7,13 +7,18 @@ import com.qixalite.spongestart.tasks.GenerateStartTask;
 import com.qixalite.spongestart.tasks.SetupForgeServerTask;
 import com.qixalite.spongestart.tasks.SetupVanillaServerTask;
 import com.qixalite.spongestart.tasks.SpongeDownloadTask;
+import org.apache.commons.io.FileUtils;
+import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ResolvedConfiguration;
+import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.tasks.SourceSet;
 import org.gradle.plugins.ide.idea.model.IdeaModel;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
 
 public class SpongeStart implements Plugin<Project>  {
@@ -33,11 +38,34 @@ public class SpongeStart implements Plugin<Project>  {
 
     private void setupTasks(SpongeStartExtension extension, Project project) {
 
-        String buildDir = Optional.ofNullable(extension.getBuildClassesFolder()).orElse(project.getBuildDir().getAbsolutePath() + "/classes/java/main");
-        String resDir = Optional.ofNullable(extension.getResourcesFolder()).orElse(project.getBuildDir().getAbsolutePath() + "/resources/main");
-        String cacheDir = Optional.ofNullable(extension.getCacheFolder()).orElse(project.getGradle().getGradleUserHomeDir() + "/caches/SpongeStart");
-        String startDir = Optional.ofNullable(extension.getStartFolder()).orElse(project.getGradle().getGradleUserHomeDir() + "/start");
+        SourceSet set = project.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
 
+        String classesDir = Optional.ofNullable(extension.getBuildClassesFolder()).orElseGet(() -> {
+            for (File a : set.getOutput().getClassesDirs()) {
+                if (a.exists()) {
+                    try {
+                        return a.getCanonicalPath();
+                    } catch (IOException e) {
+                        throw new GradleException("Not able to retrieve classes dir: " + e.getMessage());
+                    }
+                }
+            }
+            throw new GradleException("Classes dir not found");
+        });
+        String resDir;
+        try {
+            resDir = Optional.ofNullable(extension.getResourcesFolder()).orElse(set.getOutput().getResourcesDir().getCanonicalPath());
+        } catch (IOException e) {
+            throw new GradleException("Invalid resource dir: " + e.getMessage());
+        }
+        String cacheDir = Optional.ofNullable(extension.getCacheFolder()).orElse(project.getGradle().getGradleUserHomeDir() + File.separator + "SpongeStart" + File.separatorChar + "cache");
+        String startDir = Optional.ofNullable(extension.getStartFolder()).orElse(project.getGradle().getGradleUserHomeDir() + File.separator + "SpongeStart");
+
+        try {
+            FileUtils.forceMkdir(new File(cacheDir));
+        } catch (IOException e) {
+            throw new GradleException("Cannot create the cache directory: " + e.getMessage());
+        }
         extension.setCacheFolder(cacheDir);
 
         //generate start task
@@ -73,16 +101,16 @@ public class SpongeStart implements Plugin<Project>  {
         //generate intelij tasks
         String intellijModule = getintellijModuleName(project);
 
-        StringBuilder s = new StringBuilder("-classpath $PROJECT_DIR$/run/vanilla/server.jar:");
+        StringBuilder s = new StringBuilder("-classpath &quot;$PROJECT_DIR$/run/vanilla/server.jar&quot;:&quot;");
 
         Configuration compileConfiguration = project.getConfigurations().getByName("compile");
         ResolvedConfiguration resolvedconfig = compileConfiguration.getResolvedConfiguration();
 
         resolvedconfig.getFirstLevelModuleDependencies().stream().
                 filter(resolvedDependency -> !resolvedDependency.getName().startsWith("org.spongepowered:spongeapi")).forEach(
-                        dep -> dep.getAllModuleArtifacts().forEach(artifact -> s.append(artifact.getFile().getAbsolutePath()).append(":"))
+                        dep -> dep.getAllModuleArtifacts().forEach(artifact -> s.append(artifact.getFile().getAbsolutePath()).append("&quot;:&quot;"))
         );
-        s.append(resDir).append(":").append(buildDir);
+        s.append(resDir).append("&quot;:&quot;").append(classesDir).append("&quot;");
 
 
         GenerateRunTask generateVanillaRun = project.getTasks().create("GenerateVanillaRun", GenerateRunTask.class);
@@ -124,8 +152,7 @@ public class SpongeStart implements Plugin<Project>  {
                 .setFolder(new File(extension.getForgeServerFolder()));
 
         project.getTasks().create("cleanSpongeStartCache", CleanFolderTask.class)
-                .setFolder(new File(cacheDir));
-
+                .setFolder(start);
 
     }
 
