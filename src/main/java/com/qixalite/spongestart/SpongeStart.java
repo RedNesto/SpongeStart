@@ -13,6 +13,7 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ResolvedConfiguration;
+import org.gradle.api.logging.LogLevel;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.plugins.ide.idea.model.IdeaModel;
@@ -46,20 +47,23 @@ public class SpongeStart implements Plugin<Project>  {
                     try {
                         return a.getCanonicalPath();
                     } catch (IOException e) {
-                        throw new GradleException("Not able to retrieve classes dir: " + e.getMessage());
+                        project.getLogger().log(LogLevel.WARN, "Not able to retrieve the path");
                     }
                 }
             }
-            throw new GradleException("Classes dir not found");
+            project.getLogger().log(LogLevel.WARN, "Not able to retrieve classes dir. Did you build your plugin ?");
+            return null;
         });
         String resDir;
+        String cacheDir;
+        String startDir;
         try {
             resDir = Optional.ofNullable(extension.getResourcesFolder()).orElse(set.getOutput().getResourcesDir().getCanonicalPath());
+            cacheDir = Optional.ofNullable(extension.getCacheFolder()).orElse(project.getGradle().getGradleUserHomeDir().getCanonicalPath() + File.separator + "SpongeStart" + File.separatorChar + "cache");
+            startDir = Optional.ofNullable(extension.getStartFolder()).orElse(project.getGradle().getGradleUserHomeDir().getCanonicalPath() + File.separator + "SpongeStart");
         } catch (IOException e) {
-            throw new GradleException("Invalid resource dir: " + e.getMessage());
+            throw new GradleException("Invalid dir: " + e.getMessage());
         }
-        String cacheDir = Optional.ofNullable(extension.getCacheFolder()).orElse(project.getGradle().getGradleUserHomeDir() + File.separator + "SpongeStart" + File.separatorChar + "cache");
-        String startDir = Optional.ofNullable(extension.getStartFolder()).orElse(project.getGradle().getGradleUserHomeDir() + File.separator + "SpongeStart");
 
         try {
             FileUtils.forceMkdir(new File(cacheDir));
@@ -79,7 +83,7 @@ public class SpongeStart implements Plugin<Project>  {
 
         //SpongeForge Download Task
         SpongeDownloadTask downloadSpongeForge = project.getTasks().create("downloadSpongeForge", SpongeDownloadTask.class);
-        downloadSpongeForge.setLocation(new File(extension.getForgeServerFolder(), "mods" + File.separator + "sponge.jar"));
+        downloadSpongeForge.setLocation(new File(extension.getForgeServerFolder(), "mods" + File.separatorChar + "sponge.jar"));
         downloadSpongeForge.setExtension(extension);
         downloadSpongeForge.setArtifact("spongeforge");
         downloadSpongeForge.setDescription("Download SpongeForge jar");
@@ -101,16 +105,16 @@ public class SpongeStart implements Plugin<Project>  {
         //generate intelij tasks
         String intellijModule = getintellijModuleName(project);
 
-        StringBuilder s = new StringBuilder("-classpath &quot;$PROJECT_DIR$/run/vanilla/server.jar&quot;:&quot;");
+        StringBuilder s = new StringBuilder("-classpath \"$PROJECT_DIR$" + File.separatorChar + "run" + File.separatorChar + "vanilla" + File.separatorChar + "server.jar\"" + File.pathSeparatorChar + "\"");
 
         Configuration compileConfiguration = project.getConfigurations().getByName("compile");
         ResolvedConfiguration resolvedconfig = compileConfiguration.getResolvedConfiguration();
 
         resolvedconfig.getFirstLevelModuleDependencies().stream().
                 filter(resolvedDependency -> !resolvedDependency.getName().startsWith("org.spongepowered:spongeapi")).forEach(
-                        dep -> dep.getAllModuleArtifacts().forEach(artifact -> s.append(artifact.getFile().getAbsolutePath()).append("&quot;:&quot;"))
+                        dep -> dep.getAllModuleArtifacts().forEach(artifact -> s.append(artifact.getFile().getAbsolutePath()).append("\"").append(File.pathSeparatorChar).append("\""))
         );
-        s.append(resDir).append("&quot;:&quot;").append(classesDir).append("&quot;");
+        s.append(resDir).append("\"").append(File.pathSeparatorChar).append("\"").append(classesDir).append("\"");
 
 
         GenerateRunTask generateVanillaRun = project.getTasks().create("GenerateVanillaRun", GenerateRunTask.class);

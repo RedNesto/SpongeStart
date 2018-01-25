@@ -9,8 +9,8 @@ public class SpongeStartExtension {
     private String spongeForge;
     private String spongeVanilla;
     private String online = "true";
-    private String forgeServerFolder = "run" + File.separator + "forge";
-    private String vanillaServerFolder = "run" + File.separator + "vanilla";
+    private String forgeServerFolder = "run" + File.separatorChar + "forge";
+    private String vanillaServerFolder = "run" + File.separatorChar + "vanilla";
     private String buildClassesFolder;
     private String resourcesFolder;
     private String cacheFolder;

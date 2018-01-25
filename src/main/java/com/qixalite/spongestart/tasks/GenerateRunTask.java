@@ -32,7 +32,7 @@ public class GenerateRunTask extends SpongeStartTask {
     @TaskAction
     public void doStuff() {
 
-        File f = new File(".idea/workspace.xml");
+        File f = new File(".idea" + File.separatorChar + "workspace.xml");
 
         try {
 

@@ -25,7 +25,8 @@ public class SetupVanillaServerTask extends SetupServerTask {
         CloseableHttpClient client = HttpClientBuilder.create().build();
 
         downloadLibrary(client, url, getLocation());
-        downloadLibrary(client, LAUNCHWRAPPER, new File(getLocation(), "/libraries/net/minecraft/launchwrapper/1.12"));
+        downloadLibrary(client, LAUNCHWRAPPER, new File(getLocation(),
+                File.separatorChar + "libraries" + File.separatorChar + "net" + File.separatorChar + "minecraft" + File.separatorChar + "launchwrapper" + File.separatorChar + "1.12"));
 
         try {
             client.close();
@@ -37,7 +38,8 @@ public class SetupVanillaServerTask extends SetupServerTask {
 
     private void downloadLibrary(CloseableHttpClient client, String url, File location) {
         try {
-            File cached = new File(getExtension().getCacheFolder(), "downloads/" + url.substring(url.lastIndexOf('/') + 1));
+            File cached = new File(getExtension().getCacheFolder(),
+                    "downloads" + File.separatorChar + url.substring(url.lastIndexOf('/') + 1));
             int size = Integer.parseInt(client.execute(new HttpGet(url)).getLastHeader("Content-Length").getValue());
             if (!(cached.exists() && cached.length() == size)) {
                 FileUtils.copyURLToFile(new URL(url), cached);

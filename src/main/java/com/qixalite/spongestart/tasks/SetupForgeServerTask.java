@@ -27,8 +27,8 @@ public class SetupForgeServerTask extends SetupServerTask {
                     new File(getLocation(), "server.jar")
             );
 
-            FileUtils.deleteDirectory(new File(getLocation(), "libraries/net/minecraftforge"));
-            FileUtils.deleteQuietly(new File(getLocation(), "mods/mod_list.json"));
+            FileUtils.deleteDirectory(new File(getLocation(), "libraries" + File.separatorChar + "net" + File.separatorChar + "minecraftforge"));
+            FileUtils.deleteQuietly(new File(getLocation(), "mods" + File.separatorChar + "mod_list.json"));
 
         } catch (IOException | InterruptedException e) {
             throw new GradleException("Failed to setup forge: " + e.getMessage());
@@ -38,7 +38,7 @@ public class SetupForgeServerTask extends SetupServerTask {
 
     @Override
     public void tweakServer() {
-        File prop = new File(getLocation(), "config/forge.cfg");
+        File prop = new File(getLocation(), "config" + File.separatorChar + "forge.cfg");
         try {
             FileUtils.writeStringToFile(prop,
                     "general {\n" +
