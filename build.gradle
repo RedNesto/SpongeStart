@@ -1,5 +1,5 @@
 plugins {
-    id 'com.gradle.plugin-publish' version '0.9.8'
+    id 'com.gradle.plugin-publish' version '0.9.9'
 }
 
 group 'com.qixalite'
@@ -16,9 +16,9 @@ repositories {
 
 dependencies {
     testCompile 'junit:junit:4.12'
-    compile 'org.json:json:20170516'
-    compile 'commons-io:commons-io:2.5'
-    compile 'org.apache.httpcomponents:httpclient:4.5.3'
+    compile 'org.json:json:20171018'
+    compile 'commons-io:commons-io:2.6'
+    compile 'org.apache.httpcomponents:httpclient:4.5.4'
     compile gradleApi()
 }
 
@@ -58,6 +58,6 @@ pluginBundle {
 
 task wrapper(type: Wrapper) {
     gradleVersion = '4.4.1'
-    distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-bin.zip"
+    distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
 }
 
