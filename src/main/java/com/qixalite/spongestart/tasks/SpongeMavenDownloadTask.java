@@ -7,10 +7,17 @@ import org.apache.http.util.EntityUtils;
 import org.gradle.api.GradleException;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-//TODO Broken, waiting https://github.com/SpongePowered/SpongeDownloads/issues/6
-public class SpongeDownloadTask extends DownloadTask {
+
+public class SpongeMavenDownloadTask extends DownloadTask {
 
     private String artifact;
     private static final String DOWNLOAD_API = "https://dl-api.spongepowered.org/v1/org.spongepowered/";
@@ -25,19 +32,31 @@ public class SpongeDownloadTask extends DownloadTask {
         CloseableHttpClient client = HttpClientBuilder.create().build();
         String artifactVersion = getArtifactVersion();
 
-        if (artifactVersion != null) {
-            HttpGet req = new HttpGet(DOWNLOAD_API + artifact + "/downloads/" + artifactVersion);
+        if (artifactVersion == null) {
+            String mavenmeta = REPO + artifact + "/maven-metadata.xml";
+            HttpGet req = new HttpGet(mavenmeta);
 
             try {
-                JSONObject con = new JSONObject(EntityUtils.toString(client.execute(req).getEntity()));
-                setDependencies(con);
-                client.close();
-            } catch (IOException e) {
-                throw new GradleException("Failed to obtain specific version: " + artifact + " : " + e.getMessage());
-            }
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder builder = factory.newDocumentBuilder();
+                InputSource is = new InputSource(client.execute(req).getEntity().getContent());
+                Document doc = builder.parse(is);
+                NodeList nList = doc.getElementsByTagName("version");
+                String version = null;
+                for (int temp = nList.getLength() - 1; temp > -1; temp--) {
+                    version = nList.item(temp).getTextContent();
+                    if (version.contains(getExtension().getMinecraft()) && version.contains(getExtension().getApi())) {
+                        break;
+                    }
+                }
+                getProject().getLogger().lifecycle("Latest version: " + version);
+                return REPO + artifact + "/" + version + "/" + artifact + "-" + version + ".jar";
 
-            return REPO + artifact + "/" + artifactVersion + "/" + artifact + "-" + artifactVersion + ".jar";
+            } catch (ParserConfigurationException | IOException | SAXException e) {
+                throw new GradleException(e.getMessage());
+            }
         }
+
 
         HttpGet request = new HttpGet(DOWNLOAD_API + artifact + "/downloads?type=" + getExtension().getType() + "&minecraft=" + getExtension().getMinecraft() + "&limit=1");
 
@@ -52,6 +71,7 @@ public class SpongeDownloadTask extends DownloadTask {
 
     }
 
+
     private String getArtifactVersion() {
         return artifact.equalsIgnoreCase("spongeforge") ? getExtension().getSpongeForge() : getExtension().getSpongeVanilla();
     }
@@ -62,7 +82,5 @@ public class SpongeDownloadTask extends DownloadTask {
             getExtension().setForge(obj.getJSONObject("dependencies").getString("forge"));
         }
     }
-
-
 
 }

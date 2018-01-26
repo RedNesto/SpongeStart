@@ -6,7 +6,7 @@ import com.qixalite.spongestart.tasks.GenerateRunTask;
 import com.qixalite.spongestart.tasks.GenerateStartTask;
 import com.qixalite.spongestart.tasks.SetupForgeServerTask;
 import com.qixalite.spongestart.tasks.SetupVanillaServerTask;
-import com.qixalite.spongestart.tasks.SpongeDownloadTask;
+import com.qixalite.spongestart.tasks.SpongeMavenDownloadTask;
 import org.apache.commons.io.FileUtils;
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
@@ -82,14 +82,14 @@ public class SpongeStart implements Plugin<Project>  {
         project.getDependencies().add("runtime", project.files(start));
 
         //SpongeForge Download Task
-        SpongeDownloadTask downloadSpongeForge = project.getTasks().create("downloadSpongeForge", SpongeDownloadTask.class);
+        SpongeMavenDownloadTask downloadSpongeForge = project.getTasks().create("downloadSpongeForge", SpongeMavenDownloadTask.class);
         downloadSpongeForge.setLocation(new File(extension.getForgeServerFolder(), "mods" + File.separatorChar + "sponge.jar"));
         downloadSpongeForge.setExtension(extension);
         downloadSpongeForge.setArtifact("spongeforge");
         downloadSpongeForge.setDescription("Download SpongeForge jar");
 
         //SpongeVanilla Download Task
-        SpongeDownloadTask downloadSpongeVanilla = project.getTasks().create("downloadSpongeVanilla", SpongeDownloadTask.class);
+        SpongeMavenDownloadTask downloadSpongeVanilla = project.getTasks().create("downloadSpongeVanilla", SpongeMavenDownloadTask.class);
         downloadSpongeVanilla.setLocation(new File(extension.getVanillaServerFolder(), "server.jar"));
         downloadSpongeVanilla.setExtension(extension);
         downloadSpongeVanilla.setArtifact("spongevanilla");
@@ -109,6 +109,13 @@ public class SpongeStart implements Plugin<Project>  {
 
         Configuration compileConfiguration = project.getConfigurations().getByName("compile");
         ResolvedConfiguration resolvedconfig = compileConfiguration.getResolvedConfiguration();
+
+        StringBuilder api = new StringBuilder();
+        resolvedconfig.getFirstLevelModuleDependencies().stream().
+                filter(resolvedDependency -> resolvedDependency.getName().startsWith("org.spongepowered:spongeapi")).forEach(
+                        dep -> api.replace(0, api.length(), dep.getModuleVersion())//extension.setApi(artifact.getName().replaceAll("org.spongepowered:spongeapi:", "").substring(0, )))a
+        );
+        extension.setApi(api.substring(0, api.lastIndexOf("-")));
 
         resolvedconfig.getFirstLevelModuleDependencies().stream().
                 filter(resolvedDependency -> !resolvedDependency.getName().startsWith("org.spongepowered:spongeapi")).forEach(

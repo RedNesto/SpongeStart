@@ -16,6 +16,7 @@ public class SpongeStartExtension {
     private String cacheFolder;
     private String startFolder;
     private String forge;
+    private String api;
 
     public String getMinecraft() {
         return minecraft;
@@ -113,4 +114,11 @@ public class SpongeStartExtension {
         this.forge = forge;
     }
 
+    public String getApi() {
+        return api;
+    }
+
+    public void setApi(String api) {
+        this.api = api;
+    }
 }
