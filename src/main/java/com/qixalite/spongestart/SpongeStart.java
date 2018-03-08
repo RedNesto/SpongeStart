@@ -115,7 +115,12 @@ public class SpongeStart implements Plugin<Project>  {
                 filter(resolvedDependency -> resolvedDependency.getName().startsWith("org.spongepowered:spongeapi")).forEach(
                         dep -> api.replace(0, api.length(), dep.getModuleVersion())//extension.setApi(artifact.getName().replaceAll("org.spongepowered:spongeapi:", "").substring(0, )))a
         );
-        extension.setApi(api.substring(0, api.lastIndexOf("-")));
+        int isSnapshost = api.lastIndexOf("-");
+        if (isSnapshost != -1) {
+            api.subSequence(0, isSnapshost);
+        }
+
+        extension.setApi(api.toString());
 
         resolvedconfig.getFirstLevelModuleDependencies().stream().
                 filter(resolvedDependency -> !resolvedDependency.getName().startsWith("org.spongepowered:spongeapi")).forEach(
