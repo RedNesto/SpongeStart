@@ -117,7 +117,7 @@ public class SpongeStart implements Plugin<Project>  {
         );
         int isSnapshost = api.lastIndexOf("-");
         if (isSnapshost != -1) {
-            api.subSequence(0, isSnapshost);
+            api.delete(isSnapshost, api.length());
         }
 
         extension.setApi(api.toString());
