@@ -1,60 +1,91 @@
 package com.qixalite.spongestart.tasks;
 
 import com.qixalite.spongestart.SpongeStartExtension;
-import org.apache.commons.io.FileUtils;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.gradle.api.GradleException;
-import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
-public abstract class DownloadTask extends SpongeStartTask {
+public abstract class DownloadTask extends SpongeStartTask implements IRefreshable {
 
-    private File location;
-    private SpongeStartExtension ext;
-
-    @OutputFile
-    public final File getLocation() {
-        return location;
-    }
-
-    public final void setLocation(File location) {
-        this.location = location;
-    }
-
-    final SpongeStartExtension getExtension() {
-        return this.ext;
-    }
-
-    public final void setExtension(SpongeStartExtension ext) {
-        this.ext = ext;
-    }
-
+    private File destination;
+    private SpongeStartExtension extension;
 
     @TaskAction
     public void doStuff() {
-        String url = getDownloadUrl();
 
-        try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
-            File cached = new File(getExtension().getCacheFolder(), "downloads" + File.separatorChar + url.substring(url.lastIndexOf('/') + 1));
-            int size = Integer.parseInt(client.execute(new HttpGet(url)).getLastHeader("Content-Length").getValue());
-            if (!(cached.exists() && cached.length() == size)) {
-                FileUtils.copyURLToFile(new URL(url), cached);
+        String link = getUrl();
+        URLConnection connection;
+        try {
+            URL url = new URL(link);
+            connection = url.openConnection();
+        } catch (MalformedURLException e) {
+            throw new GradleException("Malformed URL: " + link + " : " + e.getMessage());
+        } catch (IOException e) {
+            throw new GradleException("I/O exception while opening a connection" + e.getMessage());
+        }
+
+        long size = connection.getContentLength();
+
+
+        File cached = new File(extension.getCacheFolder(), "downloads" + File.separatorChar + link.substring(link.lastIndexOf('/') + 1));
+
+        if (!cached.exists() || cached.length() != size) {
+            cached.delete();
+            try (InputStream in = connection.getInputStream();
+                 FileOutputStream out = new FileOutputStream(cached)) {
+
+                byte[] buf = new byte[8192];
+                int l;
+                while (-1 != (l = in.read(buf))) {
+                    out.write(buf, 0, l);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
-            FileUtils.copyFile(cached, getLocation());
-        } catch (IOException e) {
-            throw new GradleException("Failed to download: " + url + " : " + e.getMessage());
         }
+
+        destination.getParentFile().mkdirs();
+        try {
+            Files.copy(cached.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
     }
 
-    public abstract String getDownloadUrl();
+    public abstract String getUrl();
 
+    @Override
+    public void refresh() {
+        new File(extension.getCacheFolder(), "downloads").mkdirs();
+    }
 
+    protected final SpongeStartExtension getExtension() {
+        return this.extension;
+    }
 
+    public final void setExtension(SpongeStartExtension extension) {
+        this.extension = extension;
+    }
+
+    public File getDestination() {
+        return destination;
+    }
+
+    public void setDestination(File destination) {
+        this.destination = destination;
+    }
 }

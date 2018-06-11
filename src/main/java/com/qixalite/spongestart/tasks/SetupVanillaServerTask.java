@@ -1,14 +1,18 @@
 package com.qixalite.spongestart.tasks;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.gradle.api.GradleException;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 public class SetupVanillaServerTask extends SetupServerTask {
 
@@ -22,35 +26,57 @@ public class SetupVanillaServerTask extends SetupServerTask {
         String mc = getExtension().getMinecraft();
         String url = MOJANG_SERVER + mc + "/minecraft_server." + mc + ".jar";
 
-        CloseableHttpClient client = HttpClientBuilder.create().build();
-
-        downloadLibrary(client, url, getLocation());
-        downloadLibrary(client, LAUNCHWRAPPER, new File(getLocation(),
+        downloadLibrary(url, getLocation());
+        downloadLibrary(LAUNCHWRAPPER, new File(getLocation(),
                 File.separatorChar + "libraries" + File.separatorChar + "net" + File.separatorChar + "minecraft" + File.separatorChar + "launchwrapper" + File.separatorChar + "1.12"));
 
-        try {
-            client.close();
-        } catch (IOException e) {
-            throw new GradleException("Something went wrong: " + e.getMessage());
-        }
 
     }
 
-    private void downloadLibrary(CloseableHttpClient client, String url, File location) {
+    private void downloadLibrary(String link, File destination) {
+
+        URLConnection connection;
         try {
-            File cached = new File(getExtension().getCacheFolder(),
-                    "downloads" + File.separatorChar + url.substring(url.lastIndexOf('/') + 1));
-            int size = Integer.parseInt(client.execute(new HttpGet(url)).getLastHeader("Content-Length").getValue());
-            if (!(cached.exists() && cached.length() == size)) {
-                FileUtils.copyURLToFile(new URL(url), cached);
+            URL url = new URL(link);
+            connection = url.openConnection();
+        } catch (MalformedURLException e) {
+            throw new GradleException("Malformed URL: " + link + " : " + e.getMessage());
+        } catch (IOException e) {
+            throw new GradleException("I/O exception while opening a connection" + e.getMessage());
+        }
+
+        long size = connection.getContentLength();
+
+        File cached = new File(getExtension().getCacheFolder(), "downloads" + File.separatorChar + link.substring(link.lastIndexOf('/') + 1));
+
+        if (!cached.exists() || cached.length() != size) {
+            cached.delete();
+            try (InputStream in = connection.getInputStream();
+                 FileOutputStream out = new FileOutputStream(cached)) {
+
+                byte[] buf = new byte[8192];
+                int l;
+                while (-1 != (l = in.read(buf))) {
+                    out.write(buf, 0, l);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
-            FileUtils.copyFile(cached, new File(location, url.substring(url.lastIndexOf('/') + 1)));
-        } catch (IOException e) {
-            throw new GradleException("Failed to download: " + url + " : " + e.getMessage());
         }
+
+        destination.mkdirs();
+        try {
+            Files.copy(cached.toPath(), Paths.get(destination.getPath() + File.separatorChar + cached.getName()), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
-
-
+    @Override
+    public void refresh() {
+        setLocation(new File(getExtension().getVanillaServerFolder()));
+        setDescription("Setup a SpongeVanilla server");
+    }
 }

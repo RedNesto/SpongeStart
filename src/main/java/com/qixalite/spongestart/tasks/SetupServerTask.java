@@ -1,7 +1,6 @@
 package com.qixalite.spongestart.tasks;
 
 import com.qixalite.spongestart.SpongeStartExtension;
-import org.apache.commons.io.FileUtils;
 import org.gradle.api.GradleException;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
@@ -9,11 +8,51 @@ import org.gradle.api.tasks.TaskAction;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
-public abstract class SetupServerTask extends SpongeStartTask{
+public abstract class SetupServerTask extends SpongeStartTask implements IRefreshable {
 
     private File location;
-    private SpongeStartExtension ext;
+    private SpongeStartExtension extension;
+
+    @TaskAction
+    public void doStuff() {
+        acceptEula();
+        tweakServer();
+        setupServer();
+
+    }
+
+    private void acceptEula() {
+
+        List<String> lines = Collections.singletonList("eula=true");
+
+        try {
+            Files.write(new File(location, "eula.txt").toPath(), lines, Charset.defaultCharset());
+        } catch (IOException e) {
+            throw new GradleException("Failed to accept eula: " + e.getMessage());
+        }
+    }
+
+    public void tweakServer() {
+        File prop = new File(location, "server.properties");
+        List<String> lines = Arrays.asList("max-tick-time=-1",
+                "snooper-enabled=false",
+                "allow-flight=true",
+                "online-mode=" + extension.getOnline()
+        );
+
+        try {
+            Files.write(prop.toPath(), lines, Charset.defaultCharset());
+        } catch (IOException e) {
+            throw new GradleException("Failed to tweak server.properties: " + e.getMessage());
+        }
+    }
+
+    public abstract void setupServer();
 
     @OutputDirectory
     public final File getLocation() {
@@ -25,44 +64,12 @@ public abstract class SetupServerTask extends SpongeStartTask{
     }
 
 
-    final SpongeStartExtension getExtension() {
-        return this.ext;
+    protected final SpongeStartExtension getExtension() {
+        return this.extension;
     }
 
-    public final void setExtension(SpongeStartExtension ext) {
-        this.ext = ext;
+    public final void setExtension(SpongeStartExtension extension) {
+        this.extension = extension;
     }
-
-    @TaskAction
-    public void doStuff() {
-        acceptEula();
-        tweakServer();
-        setupServer();
-
-    }
-
-    private void acceptEula() {
-        try {
-            FileUtils.writeStringToFile(new File(location, "eula.txt"), "eula=true", Charset.defaultCharset());
-        } catch (IOException e) {
-            throw new GradleException("Failed to accept eula: " + e.getMessage());
-        }
-    }
-
-    public void tweakServer() {
-        File prop = new File(location, "server.properties");
-        try {
-            FileUtils.writeStringToFile(prop, "max-tick-time=-1", Charset.defaultCharset());
-            FileUtils.writeStringToFile(prop, "\nsnooper-enabled=false", Charset.defaultCharset(), true);
-            FileUtils.writeStringToFile(prop, "\nallow-flight=true", Charset.defaultCharset(), true);
-            FileUtils.writeStringToFile(prop, "\nonline-mode=" + ext.getOnline(), Charset.defaultCharset(), true);
-        } catch (IOException e) {
-            throw new GradleException("Failed to tweak server.properties: " + e.getMessage());
-        }
-    }
-
-    public abstract void setupServer();
-
-
 
 }

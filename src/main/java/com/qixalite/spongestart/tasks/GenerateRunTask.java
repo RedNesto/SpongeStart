@@ -1,7 +1,9 @@
 package com.qixalite.spongestart.tasks;
 
+import com.qixalite.spongestart.SpongeStartExtension;
 import org.gradle.api.GradleException;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.plugins.ide.idea.model.IdeaModel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -13,6 +15,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -20,7 +23,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
 
-public class GenerateRunTask extends SpongeStartTask {
+public abstract class GenerateRunTask extends SpongeStartTask implements IRefreshable {
 
     private String name;
     private String main;
@@ -28,6 +31,7 @@ public class GenerateRunTask extends SpongeStartTask {
     private String vargs = "";
     private String dir;
     private String module;
+    private SpongeStartExtension extension;
 
     @TaskAction
     public void doStuff() {
@@ -106,12 +110,26 @@ public class GenerateRunTask extends SpongeStartTask {
 
             transformer.transform(input, output);
 
-        } catch (ParserConfigurationException | SAXException | IOException | TransformerException e) {
+        } catch (ParserConfigurationException | SAXException | IOException | TransformerConfigurationException e) {
             throw new GradleException("Something went wrong with your workspace.xml: " + e.getMessage());
+        } catch (TransformerException e) {
+            e.printStackTrace();
         }
     }
 
+    @Override
+    public void refresh() {
+        this.module = getProject().getExtensions().getByType(IdeaModel.class).getModule().getName() + "_main";
+    }
 
+
+    protected final SpongeStartExtension getExtension() {
+        return this.extension;
+    }
+
+    public final void setExtension(SpongeStartExtension extension) {
+        this.extension = extension;
+    }
 
     public void setName(String name) {
         this.name = name;
@@ -121,19 +139,31 @@ public class GenerateRunTask extends SpongeStartTask {
         this.main = main;
     }
 
-    public void setPargs(String pargs) {
-        this.pargs = pargs;
-    }
-
-    public void setVargs(String vargs) {
-        this.vargs = vargs;
-    }
-
     public void setDir(String dir) {
         this.dir = dir;
     }
 
     public void setModule(String module) {
         this.module = module;
+    }
+
+    public String getModule() {
+        return module;
+    }
+
+    public void setVargs(String vargs) {
+        this.vargs = vargs;
+    }
+
+    public String getVargs() {
+        return vargs;
+    }
+
+    public void setPargs(String pargs) {
+        this.pargs = pargs;
+    }
+
+    public String getPargs() {
+        return pargs;
     }
 }
