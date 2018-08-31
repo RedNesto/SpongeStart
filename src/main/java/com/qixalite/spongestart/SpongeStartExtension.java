@@ -1,20 +1,16 @@
 package com.qixalite.spongestart;
 
-import java.io.File;
-
 public class SpongeStartExtension {
 
     private String minecraft;
-    private String type = "";
     private String spongeForge;
     private String spongeVanilla;
     private String online = "true";
-    private String forgeServerFolder = "run" + File.separatorChar + "forge";
-    private String vanillaServerFolder = "run" + File.separatorChar + "vanilla";
+    private String forgeServerFolder;
+    private String vanillaServerFolder;
     private String buildClassesFolder;
     private String resourcesFolder;
     private String cacheFolder;
-    private String startFolder;
     private String forge;
     private String api;
 
@@ -24,14 +20,6 @@ public class SpongeStartExtension {
 
     public void setMinecraft(String minecraft) {
         this.minecraft = minecraft;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public String getSpongeForge() {
@@ -96,14 +84,6 @@ public class SpongeStartExtension {
 
     public void setCacheFolder(String cacheFolder) {
         this.cacheFolder = cacheFolder;
-    }
-
-    public String getStartFolder() {
-        return startFolder;
-    }
-
-    public void setStartFolder(String startFolder) {
-        this.startFolder = startFolder;
     }
 
     public String getForge() {

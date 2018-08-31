@@ -10,6 +10,8 @@ import com.qixalite.spongestart.tasks.SpongeVanillaMavenDownloadTask;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.tasks.SourceSet;
 
 import java.io.File;
 import java.util.Optional;
@@ -33,9 +35,7 @@ public class SpongeStart implements Plugin<Project>  {
     private void setupTasks(Project project) {
         SpongeStartExtension extension = project.getExtensions().getByType(SpongeStartExtension.class);
 
-        String cacheDir = Optional.ofNullable(extension.getCacheFolder()).orElse(project.getGradle().getGradleUserHomeDir().getPath() + File.separator + "caches" + File.separatorChar + NAME);
-        new File(cacheDir).mkdirs();
-        extension.setCacheFolder(cacheDir);
+        setupDirs(project, extension);
 
         //SpongeForge Download Task
         SpongeForgeMavenDownloadTask downloadSpongeForge = project.getTasks().create("downloadSpongeForge", SpongeForgeMavenDownloadTask.class);
@@ -89,6 +89,41 @@ public class SpongeStart implements Plugin<Project>  {
         //project.getTasks().create("cleanSpongeStartCache", CleanFolderTask.class)
           //      .setFolder(start);
 
+    }
+
+
+    private void setupDirs(Project project, SpongeStartExtension extension) {
+        String cacheDir = extension.getCacheFolder();
+        if (cacheDir == null) {
+            cacheDir = project.getGradle().getGradleUserHomeDir().getAbsolutePath() + File.separator + "caches" + File.separatorChar + NAME;
+            extension.setCacheFolder(cacheDir);
+        }
+        new File(cacheDir).mkdirs();
+
+        String buildDir = extension.getBuildClassesFolder();
+        if (buildDir == null) {
+            buildDir = project.getBuildDir().getAbsolutePath();
+            extension.setBuildClassesFolder(buildDir);
+        }
+
+        String resDir = extension.getResourcesFolder();
+        if (resDir == null) {
+            SourceSet set = project.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+            resDir = set.getOutput().getResourcesDir().getAbsolutePath();
+            extension.setResourcesFolder(resDir);
+        }
+
+        String forgeDir = extension.getForgeServerFolder();
+        if (forgeDir == null) {
+            forgeDir = project.getProjectDir().getAbsolutePath() + File.separatorChar + "run" + File.separatorChar + "forge";
+            extension.setForgeServerFolder(forgeDir);
+        }
+
+        String vanillaDir = extension.getVanillaServerFolder();
+        if (vanillaDir == null) {
+            vanillaDir = project.getProjectDir().getAbsolutePath() + File.separatorChar + "run" + File.separatorChar + "vanilla";
+            extension.setVanillaServerFolder(vanillaDir);
+        }
     }
 
 }

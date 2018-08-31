@@ -57,7 +57,7 @@ public abstract class DownloadTask extends SpongeStartTask implements IRefreshab
 
         destination.getParentFile().mkdirs();
         try {
-            Files.copy(cached.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(cached.toPath().toAbsolutePath(), destination.toPath().toAbsolutePath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -67,7 +67,7 @@ public class SetupVanillaServerTask extends SetupServerTask {
 
         destination.mkdirs();
         try {
-            Files.copy(cached.toPath(), Paths.get(destination.getPath() + File.separatorChar + cached.getName()), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(cached.toPath().toAbsolutePath(), Paths.get(destination.getAbsolutePath() + File.separatorChar + cached.getName()), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }

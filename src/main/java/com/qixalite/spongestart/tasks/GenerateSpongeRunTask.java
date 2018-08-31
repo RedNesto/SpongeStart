@@ -43,15 +43,7 @@ public abstract class GenerateSpongeRunTask extends GenerateRunTask {
 
         getExtension().setApi(api.toString());
 
-        String resDir = getExtension().getResourcesFolder();
-
-        if (resDir == null) {
-            SourceSet set = getProject().getConvention().getPlugin(JavaPluginConvention.class).getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
-            resDir = set.getOutput().getResourcesDir().getPath();
-        }
-
-        s.append(resDir).append('"').append(File.pathSeparatorChar).append('"');
-
+        s.append(getExtension().getResourcesFolder()).append('"').append(File.pathSeparatorChar).append('"');
 
         File f = new File(".idea" + File.separatorChar + "misc.xml");
 
