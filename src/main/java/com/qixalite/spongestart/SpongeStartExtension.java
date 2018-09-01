@@ -13,6 +13,8 @@ public class SpongeStartExtension {
     private String cacheFolder;
     private String forge;
     private String api;
+    private String ideaOutput;
+    private boolean singletonConf = true;
 
     public String getMinecraft() {
         return minecraft;
@@ -100,5 +102,21 @@ public class SpongeStartExtension {
 
     public void setApi(String api) {
         this.api = api;
+    }
+
+    public String getIdeaOutput() {
+        return ideaOutput;
+    }
+
+    public void setIdeaOutput(String ideaOutput) {
+        this.ideaOutput = ideaOutput;
+    }
+
+    public boolean isSingletonConf() {
+        return singletonConf;
+    }
+
+    public void setSingletonConf(boolean singletonConf) {
+        this.singletonConf = singletonConf;
     }
 }
