@@ -36,7 +36,7 @@ public abstract class GenerateRunTask extends SpongeStartTask implements IRefres
     @TaskAction
     public void doStuff() {
 
-        File f = new File(".idea" + File.separatorChar + "workspace.xml");
+        File f = new File(getProject().getRootDir().getAbsolutePath() + File.separatorChar + ".idea" + File.separatorChar + "workspace.xml");
 
         try {
 

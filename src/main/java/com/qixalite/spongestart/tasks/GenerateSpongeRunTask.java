@@ -21,7 +21,7 @@ public abstract class GenerateSpongeRunTask extends GenerateRunTask {
     @Override
     public void refresh() {
         super.refresh();
-        StringBuilder s = new StringBuilder("-classpath \"$PROJECT_DIR$" + File.separatorChar + getServerPath() + File.separatorChar + "server.jar\"" + File.pathSeparatorChar + '"');
+        StringBuilder s = new StringBuilder("-classpath \"" + getServerPath() + File.separatorChar + "server.jar\"" + File.pathSeparatorChar + '"');
 
         Configuration compile = getProject().getConfigurations().getByName("compile");
         ResolvedConfiguration resolvedconfig = compile.getResolvedConfiguration();
@@ -45,7 +45,7 @@ public abstract class GenerateSpongeRunTask extends GenerateRunTask {
 
         s.append(getExtension().getResourcesFolder()).append('"').append(File.pathSeparatorChar).append('"');
 
-        File f = new File(".idea" + File.separatorChar + "misc.xml");
+        File f = new File(getProject().getRootDir().getAbsolutePath() + File.separatorChar + ".idea" + File.separatorChar + "misc.xml");
 
         try {
 
