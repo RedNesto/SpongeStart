@@ -31,8 +31,6 @@ public class SpongeStart implements Plugin<Project>  {
         target.afterEvaluate(projectAfter -> {
             setupTasks(target);
         });
-        target.getConfigurations().add(target.getConfigurations().create("dummy"));
-        target.getDependencies().add("dummy", target.files("G:\\gradle_cache\\caches\\SpongeStart\\downloads\\spongevanilla-1.12.2-7.1.0-BETA-111.jar"));
     }
 
     private void setupTasks(Project project) {
