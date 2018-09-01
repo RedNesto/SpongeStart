@@ -85,11 +85,12 @@ public class SpongeStart implements Plugin<Project>  {
 
         //Forge Setup Execution task
         ExecuteForgeServerSetupTask executeForgeServerSetupTask = project.getTasks().create("executeForgeServerSetup", ExecuteForgeServerSetupTask.class);
-        executeForgeServerSetupTask.dependsOn(downloadForge, /*generateStartTask,*/ generateForgeRun);
+        executeForgeServerSetupTask.dependsOn(downloadForge);
 
         //Setup Forge task
         SetupForgeServerTask setupForgeServer = project.getTasks().create("setupForgeServer", SetupForgeServerTask.class);
         setupForgeServer.dependsOn(executeForgeServerSetupTask);
+        setupForgeServer.finalizedBy(generateForgeRun);
         setupForgeServer.setExtension(extension);
         setupForgeServer.refresh();
 
@@ -97,7 +98,8 @@ public class SpongeStart implements Plugin<Project>  {
 
         //Setup Vanilla task
         SetupVanillaServerTask setupVanillaServer = project.getTasks().create("setupVanillaServer", SetupVanillaServerTask.class);
-        setupVanillaServer.dependsOn(downloadSpongeVanilla, generateVanillaRun);
+        setupVanillaServer.dependsOn(downloadSpongeVanilla);
+        setupVanillaServer.finalizedBy(generateVanillaRun);
         setupVanillaServer.setExtension(extension);
         setupVanillaServer.refresh();
 
