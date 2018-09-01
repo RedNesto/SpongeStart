@@ -10,6 +10,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import java.io.File;
+import java.io.IOException;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
@@ -20,8 +23,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
-import java.io.IOException;
 
 public abstract class GenerateRunTask extends SpongeStartTask implements IRefreshable {
 
@@ -36,7 +37,7 @@ public abstract class GenerateRunTask extends SpongeStartTask implements IRefres
     @TaskAction
     public void doStuff() {
 
-        File f = new File(".idea" + File.separatorChar + "workspace.xml");
+        File f = new File(getProject().getRootDir(),".idea" + File.separatorChar + "workspace.xml");
 
         try {
 
@@ -111,7 +112,7 @@ public abstract class GenerateRunTask extends SpongeStartTask implements IRefres
             transformer.transform(input, output);
 
         } catch (ParserConfigurationException | SAXException | IOException | TransformerConfigurationException e) {
-            throw new GradleException("Something went wrong with your workspace.xml: " + e.getMessage());
+            throw new GradleException("Something went wrong with your workspace.xml: " + e.getMessage(), e);
         } catch (TransformerException e) {
             e.printStackTrace();
         }

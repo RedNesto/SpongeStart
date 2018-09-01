@@ -2,19 +2,18 @@ package com.qixalite.spongestart.tasks;
 
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ResolvedConfiguration;
-import org.gradle.api.plugins.JavaPluginConvention;
-import org.gradle.api.tasks.SourceSet;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.regex.Pattern;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 public abstract class GenerateSpongeRunTask extends GenerateRunTask {
 
@@ -45,7 +44,7 @@ public abstract class GenerateSpongeRunTask extends GenerateRunTask {
 
         s.append(getExtension().getResourcesFolder()).append('"').append(File.pathSeparatorChar).append('"');
 
-        File f = new File(".idea" + File.separatorChar + "misc.xml");
+        File f = new File(getProject().getRootDir(), ".idea" + File.separatorChar + "misc.xml");
 
         try {
 

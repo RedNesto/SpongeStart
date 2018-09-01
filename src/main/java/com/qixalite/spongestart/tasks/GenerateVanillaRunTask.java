@@ -1,13 +1,15 @@
 package com.qixalite.spongestart.tasks;
 
+import java.io.File;
+
 public class GenerateVanillaRunTask extends GenerateSpongeRunTask {
 
     @Override
     public void refresh() {
         super.refresh();
-        setDescription("Generate Vanilla run configuration to start a SpongeVanilla server");
         setName("StartVanillaServer");
-        setDir("file://$PROJECT_DIR$/"+getExtension().getVanillaServerFolder());
+        setDescription("Generate Vanilla run configuration to start a SpongeVanilla server");
+        setDir(new File(getExtension().getVanillaServerFolder()).getAbsolutePath());
         setMain("org.spongepowered.server.launch.VersionCheckingMain");
         setPargs("--scan-classpath");
     }
