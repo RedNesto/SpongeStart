@@ -16,6 +16,16 @@ public class SpongeVanillaMavenDownloadTask extends SpongeDownloadTask {
 
     @Override
     public String getUrl() {
+        String artifactVersion = getArtifactVersion();
+        if (artifactVersion != null && !artifactVersion.isEmpty()) {
+            if (artifactVersion.contains("-")) {
+                return REPO + "spongevanilla/" + artifactVersion + "/spongevanilla-" + artifactVersion + ".jar";
+            } else {
+                String spongeVanillaFullVersion = getExtension().getMinecraft() + "-" + getExtension().getApi() + "-BETA-" + artifactVersion;
+                return REPO + "spongevanilla/" + spongeVanillaFullVersion + "/spongevanilla-" + spongeVanillaFullVersion + ".jar";
+            }
+        }
+
         String mavenmeta = REPO + "spongevanilla/maven-metadata.xml";
 
         URLConnection connection;

@@ -6,10 +6,10 @@ public class GenerateForgeRunTask extends GenerateSpongeRunTask {
     public void refresh() {
         super.refresh();
         setName("StartForgeServer");
+        setDescription("Generate Forge run configuration to start a SpongeForge server");
         setDir(getExtension().getForgeServerFolder());
         setMain("net.minecraftforge.fml.relauncher.ServerLaunchWrapper");
         setPargs("--scan-classpath nogui");
-        setDescription("Generate Forge run configuration to start a SpongeForge server");
     }
 
     @Override

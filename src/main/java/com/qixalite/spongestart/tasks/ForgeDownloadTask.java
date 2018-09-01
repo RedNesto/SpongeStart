@@ -17,6 +17,12 @@ public class ForgeDownloadTask extends DownloadTask {
 
     @Override
     public String getUrl() {
+        String artifactVersion = getExtension().getForge();
+        if (artifactVersion != null && !artifactVersion.isEmpty()) {
+            String fullForgeVersion = getExtension().getMinecraft() + "-" + artifactVersion;
+            return "https://files.minecraftforge.net/maven/net/minecraftforge/forge/" + fullForgeVersion + "/forge-" + fullForgeVersion + "-installer.jar";
+        }
+
         URLConnection connection;
         try {
             URL url = new URL("http://files.minecraftforge.net/maven/net/minecraftforge/forge/promotions_slim.json");

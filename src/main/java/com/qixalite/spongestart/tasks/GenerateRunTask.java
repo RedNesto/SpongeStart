@@ -10,6 +10,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import java.io.File;
+import java.io.IOException;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
@@ -20,8 +23,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
-import java.io.IOException;
 
 public abstract class GenerateRunTask extends SpongeStartTask implements IRefreshable {
 
@@ -70,6 +71,7 @@ public abstract class GenerateRunTask extends SpongeStartTask implements IRefres
             Element configuration = doc.createElement("configuration");
             configuration.setAttribute("name", name );
             configuration.setAttribute("type", "Application");
+            configuration.setAttribute("singleton", String.valueOf(extension.isSingletonConf()));
 
             Element mainName = doc.createElement("option");
             mainName.setAttribute("name", "MAIN_CLASS_NAME");
@@ -93,6 +95,23 @@ public abstract class GenerateRunTask extends SpongeStartTask implements IRefres
             Element moduleName = doc.createElement("module");
             moduleName.setAttribute("name", module);
 
+            if (getProject().getPlugins().hasPlugin("net.minecrell.vanillagradle.server")) {
+                Element methodName = doc.createElement("method");
+                methodName.setAttribute("v", "2");
+
+                Element methodOptionName = doc.createElement("option");
+                methodOptionName.setAttribute("name", "Gradle.BeforeRunTask");
+                methodOptionName.setAttribute("enabled", "true");
+                methodOptionName.setAttribute("tasks", "copyReobfToRun");
+                methodOptionName.setAttribute("externalProjectPath", "$PROJECT_DIR$");
+                methodOptionName.setAttribute("vmOptions", "");
+                methodOptionName.setAttribute("scriptParameters", "");
+
+                methodName.appendChild(methodOptionName);
+
+                configuration.appendChild(methodName);
+            }
+
 
             configuration.appendChild(mainName);
 
@@ -111,7 +130,7 @@ public abstract class GenerateRunTask extends SpongeStartTask implements IRefres
             transformer.transform(input, output);
 
         } catch (ParserConfigurationException | SAXException | IOException | TransformerConfigurationException e) {
-            throw new GradleException("Something went wrong with your workspace.xml: " + e.getMessage());
+            throw new GradleException("Something went wrong with your workspace.xml: " + e.getMessage(), e);
         } catch (TransformerException e) {
             e.printStackTrace();
         }

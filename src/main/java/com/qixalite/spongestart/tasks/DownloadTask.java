@@ -5,8 +5,6 @@ import org.gradle.api.GradleException;
 import org.gradle.api.tasks.TaskAction;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -37,33 +35,25 @@ public abstract class DownloadTask extends SpongeStartTask implements IRefreshab
         long size = connection.getContentLength();
 
 
-        File cached = new File(extension.getCacheFolder(), "downloads" + File.separatorChar + link.substring(link.lastIndexOf('/') + 1));
+        File cached = new File(extension.getCacheFolder(), "downloads" + File.separatorChar + link.substring(link.lastIndexOf('/') + 1)).getAbsoluteFile();
 
         if (!cached.exists() || cached.length() != size) {
             cached.delete();
-            try (InputStream in = connection.getInputStream();
-                 FileOutputStream out = new FileOutputStream(cached)) {
-
-                byte[] buf = new byte[8192];
-                int l;
-                while (-1 != (l = in.read(buf))) {
-                    out.write(buf, 0, l);
-                }
+            try (InputStream in = connection.getInputStream()) {
+                Files.copy(in, cached.toPath(), StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
 
-        destination.getParentFile().mkdirs();
-        try {
-            Files.copy(cached.toPath().toAbsolutePath(), destination.toPath().toAbsolutePath(), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!destination.exists()) {
+            destination.getParentFile().mkdirs();
+            try {
+                Files.copy(cached.toPath().toAbsolutePath(), destination.toPath().toAbsolutePath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
-
-
     }
 
     public abstract String getUrl();

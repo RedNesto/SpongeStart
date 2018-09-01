@@ -16,6 +16,16 @@ public class SpongeForgeMavenDownloadTask extends SpongeDownloadTask {
 
     @Override
     public String getUrl() {
+        String artifactVersion = getArtifactVersion();
+        if (artifactVersion != null && !artifactVersion.isEmpty()) {
+            if (artifactVersion.contains("-")) {
+                return REPO + "spongeforge/" + artifactVersion + "/spongeforge-" + artifactVersion + ".jar";
+            } else {
+                String spongeForgeFullVersion = getExtension().getMinecraft() + "-" + getExtension().getForge() + "-" + getExtension().getApi() + "-BETA-" + artifactVersion;
+                return REPO + "spongeforge/" + spongeForgeFullVersion + "/spongeforge-" + spongeForgeFullVersion + ".jar";
+            }
+        }
+
         String mavenmeta = REPO + "spongeforge/maven-metadata.xml";
 
         URLConnection connection;

@@ -23,7 +23,6 @@ public abstract class SetupServerTask extends SpongeStartTask implements IRefres
         acceptEula();
         tweakServer();
         setupServer();
-
     }
 
     private void acceptEula() {

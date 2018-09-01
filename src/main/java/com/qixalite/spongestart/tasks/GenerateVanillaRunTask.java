@@ -5,8 +5,8 @@ public class GenerateVanillaRunTask extends GenerateSpongeRunTask {
     @Override
     public void refresh() {
         super.refresh();
-        setDescription("Generate Vanilla run configuration to start a SpongeVanilla server");
         setName("StartVanillaServer");
+        setDescription("Generate Vanilla run configuration to start a SpongeVanilla server");
         setDir(getExtension().getVanillaServerFolder());
         setMain("org.spongepowered.server.launch.VersionCheckingMain");
         setPargs("--scan-classpath");
