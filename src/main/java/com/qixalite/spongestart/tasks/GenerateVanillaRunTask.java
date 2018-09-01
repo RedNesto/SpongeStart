@@ -9,7 +9,7 @@ public class GenerateVanillaRunTask extends GenerateSpongeRunTask {
         super.refresh();
         setName("StartVanillaServer");
         setDescription("Generate Vanilla run configuration to start a SpongeVanilla server");
-        setDir(new File(getExtension().getVanillaServerFolder()).getAbsolutePath());
+        setDir(new File(getServerPath()).getAbsolutePath());
         setMain("org.spongepowered.server.launch.VersionCheckingMain");
         setPargs("--scan-classpath");
     }

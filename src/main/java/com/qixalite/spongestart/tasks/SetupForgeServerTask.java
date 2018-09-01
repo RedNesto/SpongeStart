@@ -13,21 +13,6 @@ public class SetupForgeServerTask extends SetupServerTask {
 
     @Override
     public void setupServer() {
-
-        try {
-            Process pr = new ProcessBuilder()
-                    .command("java -jar setup.jar --installServer".split(" "))
-                    .directory(getLocation())
-                    .redirectErrorStream(true)
-                    .start();
-            pr.waitFor();
-        } catch (InterruptedException e) {
-            throw new GradleException("Failed to setup forge: " + e.getMessage());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
         new File(getLocation(), "setup.jar").delete();
 
         File forge = new File(getLocation(), "forge-" + getExtension().getMinecraft() + '-' + getExtension().getForge() + "-universal.jar");

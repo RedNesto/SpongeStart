@@ -71,6 +71,7 @@ public abstract class GenerateRunTask extends SpongeStartTask implements IRefres
             Element configuration = doc.createElement("configuration");
             configuration.setAttribute("name", name );
             configuration.setAttribute("type", "Application");
+            configuration.setAttribute("singleton", String.valueOf(extension.isSingletonConf()));
 
             Element mainName = doc.createElement("option");
             mainName.setAttribute("name", "MAIN_CLASS_NAME");
@@ -93,6 +94,23 @@ public abstract class GenerateRunTask extends SpongeStartTask implements IRefres
 
             Element moduleName = doc.createElement("module");
             moduleName.setAttribute("name", module);
+
+            if (getProject().getPlugins().hasPlugin("net.minecrell.vanillagradle.server")) {
+                Element methodName = doc.createElement("method");
+                methodName.setAttribute("v", "2");
+
+                Element methodOptionName = doc.createElement("option");
+                methodOptionName.setAttribute("name", "Gradle.BeforeRunTask");
+                methodOptionName.setAttribute("enabled", "true");
+                methodOptionName.setAttribute("tasks", "copyReobfToRun");
+                methodOptionName.setAttribute("externalProjectPath", "$PROJECT_DIR$");
+                methodOptionName.setAttribute("vmOptions", "");
+                methodOptionName.setAttribute("scriptParameters", "");
+
+                methodName.appendChild(methodOptionName);
+
+                configuration.appendChild(methodName);
+            }
 
 
             configuration.appendChild(mainName);

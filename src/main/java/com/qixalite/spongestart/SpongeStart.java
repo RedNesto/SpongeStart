@@ -1,5 +1,8 @@
 package com.qixalite.spongestart;
 
+import com.qixalite.spongestart.tasks.CopyReobfToRunTask;
+import com.qixalite.spongestart.tasks.DeleteVanillaServerModsTask;
+import com.qixalite.spongestart.tasks.ExecuteForgeServerSetupTask;
 import com.qixalite.spongestart.tasks.ForgeDownloadTask;
 import com.qixalite.spongestart.tasks.GenerateForgeRunTask;
 import com.qixalite.spongestart.tasks.GenerateVanillaRunTask;
@@ -28,15 +31,30 @@ public class SpongeStart implements Plugin<Project>  {
 
         target.getExtensions().create(NAME.toLowerCase(), SpongeStartExtension.class);
 
-        target.afterEvaluate(projectAfter -> {
-            setupTasks(target);
-        });
+        target.afterEvaluate(projectAfter -> setupTasks(target));
     }
 
     private void setupTasks(Project project) {
         SpongeStartExtension extension = project.getExtensions().getByType(SpongeStartExtension.class);
 
+        project.getDependencies().add("runtime", "org.spongepowered:spongevanilla:" + extension.getSpongeVanilla());
+        project.getDependencies().add("runtime", "org.spongepowered:spongeforge:" + extension.getSpongeForge());
+        String forgeRunDir = extension.getForgeServerFolder() != null ? extension.getForgeServerFolder() : (File.separatorChar + "run" + File.separatorChar + "forge");
+        project.getDependencies().add("runtime", project.files( forgeRunDir + File.separatorChar + "server.jar"));
+
         setupDirs(project, extension);
+
+        if (project.getPlugins().hasPlugin("net.minecrell.vanillagradle.server")) {
+            //Vanilla server mods clean
+            DeleteVanillaServerModsTask deleteVanillaServerMods = project.getTasks().create("deleteVanillaServerMods", DeleteVanillaServerModsTask.class);
+            deleteVanillaServerMods.setExtension(extension);
+
+            //Copies reobf jar to vanilla run dir
+            CopyReobfToRunTask copyReobfToRun = project.getTasks().create("copyReobfToRun", CopyReobfToRunTask.class);
+            copyReobfToRun.dependsOn("reobfJar", deleteVanillaServerMods);
+            copyReobfToRun.setDestinationDir(project.file(extension.getVanillaServerFolder() + "/mods"));
+            copyReobfToRun.from(project.getTasks().getByName("reobfJar").getOutputs());
+        }
 
         //SpongeForge Download Task
         SpongeForgeMavenDownloadTask downloadSpongeForge = project.getTasks().create("downloadSpongeForge", SpongeForgeMavenDownloadTask.class);
@@ -65,11 +83,17 @@ public class SpongeStart implements Plugin<Project>  {
         generateForgeRun.refresh();
 
 
+        //Forge Setup Execution task
+        ExecuteForgeServerSetupTask executeForgeServerSetupTask = project.getTasks().create("executeForgeServerSetup", ExecuteForgeServerSetupTask.class);
+        executeForgeServerSetupTask.dependsOn(downloadForge, /*generateStartTask,*/ generateForgeRun);
+
         //Setup Forge task
         SetupForgeServerTask setupForgeServer = project.getTasks().create("setupForgeServer", SetupForgeServerTask.class);
-        setupForgeServer.dependsOn(downloadForge, /*generateStartTask,*/ generateForgeRun);
+        setupForgeServer.dependsOn(executeForgeServerSetupTask);
         setupForgeServer.setExtension(extension);
         setupForgeServer.refresh();
+
+        executeForgeServerSetupTask.init(setupForgeServer);
 
         //Setup Vanilla task
         SetupVanillaServerTask setupVanillaServer = project.getTasks().create("setupVanillaServer", SetupVanillaServerTask.class);
