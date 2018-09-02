@@ -104,8 +104,6 @@ public abstract class GenerateRunTask extends SpongeStartTask implements IRefres
                 methodOptionName.setAttribute("enabled", "true");
                 methodOptionName.setAttribute("tasks", "copyReobfToRun");
                 methodOptionName.setAttribute("externalProjectPath", "$PROJECT_DIR$");
-                methodOptionName.setAttribute("vmOptions", "");
-                methodOptionName.setAttribute("scriptParameters", "");
 
                 methodName.appendChild(methodOptionName);
 
